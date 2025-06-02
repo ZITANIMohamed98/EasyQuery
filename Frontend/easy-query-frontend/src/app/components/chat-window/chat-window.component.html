@@ -1,0 +1,6 @@
+<div class="chat-window">
+  <div *ngFor="let msg of chatService.messages" class="message">
+    <div class="sender">{{ msg.sender }}</div>
+    <div class="text">{{ msg.text }}</div>
+  </div>
+</div>

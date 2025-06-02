@@ -1,0 +1,7 @@
+<div class="sidebar">
+  <button class="new-chat">+ New Chat</button>
+  <input class="search" placeholder="Search..." />
+  <div class="chat-list">
+    <div *ngFor="let chat of chats" class="chat-item">{{ chat.title }}</div>
+  </div>
+</div>
