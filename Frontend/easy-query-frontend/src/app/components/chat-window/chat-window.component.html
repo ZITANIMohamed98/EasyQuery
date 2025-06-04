@@ -1,6 +1,43 @@
-<div class="chat-window">
-  <div *ngFor="let msg of chatService.messages" class="message">
-    <div class="sender">{{ msg.sender }}</div>
-    <div class="text">{{ msg.text }}</div>
+<div #chatWindow class="chat-window-container">
+  <div
+    *ngFor="let msg of chatService.messages; let i = index"
+    class="d-flex"
+    [ngClass]="{
+      'justify-content-end': msg.sender === 'You',
+      'justify-content-start': msg.sender !== 'You'
+    }"
+  >
+    <div
+      [ngClass]="{
+        'user-message': msg.sender === 'You',
+        'bot-message': msg.sender !== 'You'
+      }"
+      class="message"
+    >
+      <!-- If bot message and SQL, show formatted code -->
+      <ng-container *ngIf="msg.sender !== 'You' && isSQL(msg.text); else plainText">
+        <pre><code class="language-sql">{{ msg.text }}</code></pre>
+      </ng-container>
+
+      <ng-template #plainText>
+        <div class="text">{{ msg.text }}</div>
+      </ng-template>
+
+      <!-- Copy icon under bot messages -->
+      <div
+        *ngIf="msg.sender !== 'You'"
+        class="copy-icon"
+        (click)="copyMessage($event, msg.text, i)"
+        title="Copy to clipboard"
+      >
+        <i
+          [class]="
+            copiedIndex === i
+              ? 'bi bi-clipboard2-check-fill'
+              : 'bi bi-clipboard2'
+          "
+        ></i>
+      </div>
+    </div>
   </div>
 </div>

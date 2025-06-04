@@ -1,9 +1,19 @@
 <div class="chat-input">
-  <input 
-  type="text"
-  [(ngModel)]="inputText" 
-  placeholder="What's in your mind?"
-  (keydown.enter)="sendMessage()"
- />
-  <button (click)="sendMessage()">Send</button>
+  <div class="input-wrapper">
+    <input 
+      type="text"
+      [(ngModel)]="inputText" 
+      placeholder="What would you like to query?"
+      (keydown.enter)="sendMessage()"
+      (focus)="inputFocused = true"
+      (blur)="inputFocused = false"
+    />
+<button 
+  (mousedown)="sendMessage()" 
+  [class.visible]="inputText.trim().length > 0 && inputFocused"
+>
+  <i class="bi bi-arrow-up"></i>
+</button>
+
+  </div>
 </div>

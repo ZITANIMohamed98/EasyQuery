@@ -5,6 +5,7 @@ import { ChatInputComponent } from './components/chat-input/chat-input.component
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+
 @Component({
   selector: 'app-root',
   standalone: true,

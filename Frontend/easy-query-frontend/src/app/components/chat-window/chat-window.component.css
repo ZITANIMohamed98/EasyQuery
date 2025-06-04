@@ -1,6 +1,6 @@
-.chat-window {
+.chat-window-container {
   flex: 1;
-  padding: 1.5rem;
+  padding: 23rem 23rem; /* More horizontal padding */
   overflow-y: auto;
   background-color: #f9fafc;
   display: flex;
@@ -8,21 +8,35 @@
   gap: 1rem;
 }
 
+.copy-icon {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
 .message {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
   padding: 0.75rem 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  margin: 0.25rem 0;
 }
 
-.sender {
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 0.25rem;
+.message:hover .copy-icon {
+  opacity: 1;
+  
 }
 
-.text {
-  color: #4b5563;
+.user-message {
+  max-width: 60%;
+  background-color: #dbeafe;
+  border-top-right-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+.bot-message pre {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  white-space: pre-wrap; /* Wrap long lines */
+  max-width: 60vw;
 }

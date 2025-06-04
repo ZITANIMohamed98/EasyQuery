@@ -12,6 +12,7 @@ import { ChatService } from '../../services/chat.service';
 })
 export class ChatInputComponent {
   inputText = '';
+  inputFocused = false;
 
   constructor(private chatService: ChatService) {}
 
