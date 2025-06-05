@@ -14,7 +14,7 @@
       }"
       class="message"
     >
-      <!-- If bot message and SQL, show formatted code -->
+      <!-- SQL code block for bot messages -->
       <ng-container *ngIf="msg.sender !== 'You' && isSQL(msg.text); else plainText">
         <pre><code class="language-sql">{{ msg.text }}</code></pre>
       </ng-container>
@@ -23,7 +23,9 @@
         <div class="text">{{ msg.text }}</div>
       </ng-template>
 
-      <!-- Copy icon under bot messages -->
+      <div class="message-buttons">
+
+      <!-- Copy icon: always shown for bot messages -->
       <div
         *ngIf="msg.sender !== 'You'"
         class="copy-icon"
@@ -37,6 +39,18 @@
               : 'bi bi-clipboard2'
           "
         ></i>
+      </div>
+
+      <!-- Execute icon: only if SQL and awaiting execution -->
+      <div
+        *ngIf="msg.awaitingExecution"
+        class="execute-icon"
+        (click)="executeQuery(msg.sql ?? msg.text, i)"
+        title="Execute the query"
+      >
+        <i class="bi bi-play-circle"> Execute this query</i>
+      </div>
+
       </div>
     </div>
   </div>

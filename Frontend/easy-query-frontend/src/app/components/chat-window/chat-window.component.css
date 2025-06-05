@@ -1,16 +1,11 @@
 .chat-window-container {
   flex: 1;
-  padding: 23rem 23rem; /* More horizontal padding */
+  padding: 23rem 23rem; 
   overflow-y: auto;
   background-color: #f9fafc;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-.copy-icon {
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
 .message {
@@ -19,9 +14,20 @@
   margin: 0.25rem 0;
 }
 
-.message:hover .copy-icon {
+.message-buttons {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.message-buttons i {
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.message-buttons i:hover {
   opacity: 1;
-  
 }
 
 .user-message {

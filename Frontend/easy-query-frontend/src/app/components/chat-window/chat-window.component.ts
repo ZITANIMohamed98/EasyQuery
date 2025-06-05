@@ -14,13 +14,13 @@ import 'prismjs/components/prism-sql';
 })
 export class ChatWindowComponent implements AfterViewChecked {
   @ViewChild('chatWindow') private chatWindow!: ElementRef;
-  copiedIndex: number | null = null;  // tracks which message is copied
+  copiedIndex: number | null = null;
 
   constructor(public chatService: ChatService) {}
 
   ngAfterViewChecked() {
     this.scrollToBottom();
-    Prism.highlightAllUnder(this.chatWindow.nativeElement); // Highlight code blocks
+    Prism.highlightAllUnder(this.chatWindow.nativeElement);
   }
 
   private scrollToBottom(): void {
@@ -31,18 +31,34 @@ export class ChatWindowComponent implements AfterViewChecked {
     }
   }
 
-  copyMessage(event: MouseEvent, text: string, index: number): void {
-    event.stopPropagation();
-    navigator.clipboard.writeText(text).then(() => {
-      this.copiedIndex = index;
-    }).catch(err => {
-      console.error('Failed to copy message:', err);
-    });
+copyMessage(event: MouseEvent, text: string, index: number): void {
+  event.stopPropagation();
+  navigator.clipboard.writeText(text).then(() => {
+    this.copiedIndex = index;
+    setTimeout(() => {
+      this.copiedIndex = null;  // revert icon after 1.5 seconds
+    }, 1500);
+  }).catch(err => {
+    console.error('Failed to copy message:', err);
+  });
+}
+
+
+  executeQuery(sql: string, index: number) {
+    // Remove the execute button by clearing awaitingExecution flag
+    this.chatService.messages[index].awaitingExecution = false;
+
+    // Execute the SQL (mock or real)
+    this.chatService.getQueryResult(sql);
   }
 
+  private static readonly SQL_KEYWORDS = [
+    'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'DROP', 'FROM', 'WHERE'
+  ];
+
   isSQL(text: string): boolean {
-    const sqlKeywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'DROP', 'FROM', 'WHERE'];
+    if (!text) return false;
     const upperText = text.toUpperCase();
-    return sqlKeywords.some(keyword => upperText.includes(keyword));
+    return ChatWindowComponent.SQL_KEYWORDS.some(keyword => upperText.includes(keyword));
   }
 }

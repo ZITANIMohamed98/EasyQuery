@@ -1,39 +1,56 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
+
+interface ChatMessage {
+  sender: string;
+  text: string;
+  type?: 'confirm' | 'sql' | 'result' | string;
+  sql?: string;
+    awaitingExecution?: boolean; // new flag
+}
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  messages: { sender: string; text: string }[] = [];
+  messages: ChatMessage[] = [];
 
-  addMessage(message: { sender: string; text: string }) {
-    this.messages.push(message);
+  queryReady = new EventEmitter<string>(); // Emits SQL string when ready
 
-    // Add bot response with a delay
-    setTimeout(() => {
-      const responseText = this.generateResponse(message.text);
-      this.messages.push({ sender: 'EasyQuery', text: responseText });
-    }, 1000); 
+  constructor() {}
+
+  // Simulate generating SQL from user input
+  getQuery(userInput: string) {
+    // Clear previous system/bot messages if needed or keep history
+    // Add user message
+    this.addMessage({ sender: 'You', text: userInput });
+
+    // Mock SQL generation logic (simplified)
+    const mockSql = `SELECT * FROM Products WHERE Name LIKE '%${userInput}%'`;
+
+    // Add bot message with generated SQL
+  this.addMessage({ sender: 'Bot', text: mockSql, type: 'sql', sql: mockSql, awaitingExecution: true });
+
+    // Add system message asking for confirmation to execute
+    this.queryReady.emit(mockSql);
   }
 
-   private generateResponse(userMessage: string): string {
-    // Basic response logic; replace with AI call or custom logic later
-    return `USE AdventureWorks2022;
-GO
+  // Simulate executing SQL query and returning results
+  getQueryResult(sql: string) {
+    // Add system message that query execution is starting
+    this.addMessage({ sender: 'Bot', text: 'Executing the query...' });
 
-IF OBJECT_ID('dbo.NewProducts', 'U') IS NOT NULL
-DROP TABLE dbo.NewProducts;
-GO
+    // Mock result for demonstration
+    const mockResult = `
+ID | Name          | Price
+---|---------------|-------
+1  | Sample Product| $25.00
+2  | Another Item  | $40.00
+`;
 
-ALTER DATABASE AdventureWorks2022 SET RECOVERY BULK_LOGGED;
-GO
+    // Add bot message with mock result
+    this.addMessage({ sender: 'Bot', text: mockResult, type: 'result' });
+  }
 
-SELECT *
-INTO dbo.NewProducts
-FROM Production.Product
-WHERE ListPrice > $25
-    AND ListPrice < $100;
-GO
-
-ALTER DATABASE AdventureWorks2022 SET RECOVERY FULL;
-GO`;
+  // Simple method to add a message to chat history
+  addMessage(message: ChatMessage) {
+    this.messages.push(message);
   }
 }

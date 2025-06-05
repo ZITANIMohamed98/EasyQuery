@@ -13,13 +13,17 @@ import { ChatService } from '../../services/chat.service';
 export class ChatInputComponent {
   inputText = '';
   inputFocused = false;
-
+  messageSent = false; // <- Add this
+    
   constructor(private chatService: ChatService) {}
-
   sendMessage() {
     if (this.inputText.trim()) {
-      this.chatService.addMessage({ sender: 'You', text: this.inputText });
+      this.chatService.getQuery(this.inputText);
       this.inputText = '';
+     if (!this.messageSent) {
+        this.messageSent = true; // <- Trigger UI transition
+      }
     }
+    
   }
 }
