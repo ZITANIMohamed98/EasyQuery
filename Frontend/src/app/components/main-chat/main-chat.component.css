@@ -5,6 +5,25 @@
   font-family: 'Inter', sans-serif;
 }
 
+.logout-button {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000; /* ensures it stays on top */
+  padding: 0.5rem 1rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #357ab7;
+}
+
+
 .chat-area {
   flex: 1;
   display: flex;
