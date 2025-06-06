@@ -1,43 +1,56 @@
-All new features and fixes are to be pushed to api-integration-bart until integration is ready.
+"All new features and fixes are to be pushed to api-integration-bart until integration is ready."
 
 ## API Gateway (main.py)
 
-- **/process** (POST): Integrates Text-to-SQL service (port 8001) and SQL Tools service (port 8002)
-    - **expects:**  
+- **/getQuery** (POST): Gets a SQL query for a natural language input
+    - expects:
       ```json
       {
-        "user_input": "<natural language query>",
-        "user_id": "<string>"
+        "user_id": "user42",
+        "activity_id": "hack2024",
+        "database_name": "trips",
+        "input": "Show all completed trips in Seattle"
       }
       ```
-    - **returns:**  
+    - returns:
       ```json
       {
-        "sql": "<generated_sql_query>",
-        "result": "<query_result_data>"
+        "user_id": "user42",
+        "activity_id": "hack2024",
+        "database_name": "trips",
+        "query": "SELECT * FROM trips WHERE city='Seattle' AND status='completed'"
       }
       ```
+- **/executeQuery** (POST): Executes a SQL query and returns results
+    - expects:
+      ```json
+      {
+        "user_id": "user42",
+        "activity_id": "hack2024",
+        "database_name": "trips",
+        "input": "Show all completed trips in Seattle",
+        "query": "SELECT * FROM trips WHERE city='Seattle' AND status='completed'"
+      }
+      ```
+    - returns:
+      ```json
+      {
+        "user_id": "user42",
+        "activity_id": "hack2024",
+        "database_name": "trips",
+        "query": "SELECT * FROM trips WHERE city='Seattle' AND status='completed'",
+        "data": [{"trip_id": 123, "city": "Seattle", "database": "trips"}]
+      }
+      ```
+- **/process** (POST): (legacy endpoint, kept for backward compatibility)
+
 - **Environment variables:**  
     - `PREDICT_SQL_URL` (default: `http://localhost:8001/predict_sql`)
     - `SQLTOOLS_URL` (default: `http://localhost:8002/run_query`)
+    - `USE_MOCKS` (default: `false`)
 
 ## How to run API Gateway locally
 
 1. Go to the Api directory:
+```bash
 cd Api
-
-2. Install dependencies:
-pip install -r requirements.txt
-
-3. Create a `.env` file with:
-USE_MOCKS=true
-PREDICT_SQL_URL=http://localhost:8001/predict_sql
-SQLTOOLS_URL=http://localhost:8002/run_query
-
-*(set `USE_MOCKS=false` to use real services later)*
-
-4. Start the server:
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-
-5. Open in browser or test via API:  
-[http://localhost:8000/docs](http://localhost:8000/docs)
