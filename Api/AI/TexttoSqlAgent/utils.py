@@ -6,6 +6,10 @@ import uuid
 import pandas as pd
 import torch
 
+torch_device = 'cuda' if torch.cuda.is_available() else 'cpu'
+encoding_model_name = 'shahrukhx01/paraphrase-mpnet-base-v2-fuzzy-matcher'
+encoding_model = AutoModel.from_pretrained(encoding_model_name).to(torch_device)
+encoding_tokenizer = AutoTokenizer.from_pretrained(encoding_model_name)
 def get_relevent_table(question, tables, headers):
     """
     Returns the relevant table and its headers based on the question.
@@ -31,13 +35,18 @@ def get_relevent_table(question, tables, headers):
     chain = prompt | model
 
     response = chain.invoke({"tables": tables, "headers": headers, "question": question})
-    return response['text'].strip()  # Assuming the response is a dictionary with 'text' key
+    if isinstance(response, dict) and 'text' in response:
+        return response['text'].strip()
+    elif isinstance(response, str):
+        return response.strip()
+    else:
+        raise ValueError("Unexpected response type from chain.invoke")
 
 
 # define the erosion step function
 # this function takes a question schema as input and generates a SQL query using a pre-trained BART model
 
-def erosion_step(question_schema):
+def erosion_step(question_schema, torch_device):
     """This function is used to genrate the SQL query from the question and table schema
     It uses a pre-trained BART model to generate the SQL query.
     """
@@ -53,7 +62,6 @@ def erosion_step(question_schema):
     ##['Player', 'No.', 'Nationality', 'Position', 'Years in Toronto', 'School/Club Team']
 
     ## we have to encode schema and concat the question alonside it as follows
-
     ## tokenize question_schema
     inputs = tokenizer([question_schema], max_length=1024, return_tensors='pt').to(torch_device)
 
