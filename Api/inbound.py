@@ -4,7 +4,9 @@ from pydantic import BaseModel, constr
 import os
 from outbound import call_predict_sql, call_sqltools
 from dotenv import load_dotenv
-from AI.TexttoSqlAgent.models import getQueryModel, responseQueryModel, predictQueryModel
+from AI.TexttoSqlAgent.models import getQueryModel, listAllowedDbModel
+from AI.AnalyzersCrew.models import executeQueryModel
+
 from AI.TexttoSqlAgent.main import text_to_sql
 
 load_dotenv()
@@ -46,13 +48,38 @@ def list_allowed_dbs(request: Request):
     if not user_id:
         raise HTTPException(status_code=400, detail="User ID is required")
 
-    # Mock response for allowed databases
+    # Example: fetch allowed databases for the user (mocked here)
     allowed_dbs = ["trips", "users", "orders"]
-    return {"user_id": user_id, "allowed_databases": allowed_dbs}
+    db_model = listAllowedDbModel(
+        user_id=user_id, 
+        database_list=allowed_dbs
+        )
+    return {
+        "user_id": db_model.user_id,
+        "allowed_databases": db_model.database_list
+    }
 
 
 @router.post("/executeQuery")
-def execute_query(exec_data: ExecuteInput):
+async def execute_query(request: Request):
+    data = await request.json()
+    # Create an instance of exesscuteQueryModel from the request data
+    exec_model = executeQueryModel(
+        user_id=data.get("user_id"),
+        activity_id=data.get("activity_id"),
+        database_name=data.get("database_name"),
+        input=data.get("input")
+    )
+
+    # Example: mock result for demonstration
+    result = {
+        "user_id": exec_model.user_id,
+        "activity_id": exec_model.activity_id,
+        "database_name": exec_model.database_name,
+        "input": exec_model.input,
+        "output": "Query executed successfully (mocked)"
+    }
+    return result
 
 
 
