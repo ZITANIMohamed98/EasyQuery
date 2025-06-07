@@ -7,6 +7,7 @@
   background: #f0f2f5;
 }
 
+
 /* Box styles */
 .login-box {
   background: white;
@@ -18,10 +19,16 @@
 }
 
 /* Heading */
-.login-box h2 {
+.login-box h2{
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.75rem;
+}
+
+.login-box .project-logo{
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
 }
 
 /* Form group */
