@@ -14,10 +14,9 @@ class getQueryModel:
 # create an object that holds the data to trigger the texttosql method
 
 class listAllowedDbModel:
-
-    def __init__(self, user_id=None, database_list= []):
+    def __init__(self, user_id=None, database_list=None):
         self.user_id = user_id if user_id else str(uuid.uuid4())
-        self.data
+        self.database_list = database_list if database_list is not None else []
 
 # create an object to hold the Api response data 
 
