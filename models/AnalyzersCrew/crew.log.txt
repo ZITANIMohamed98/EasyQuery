@@ -1,0 +1,55 @@
+2025-06-07 06:09:45: task_name="None", task="Analyze the data from the database and write an analysis for Effects on salary (in USD) based on company location, size and employee experience, here is the data:
+
+index,work_year,experience_level,employment_type,job_title,salary,salary_currency,salary_in_usd,employee_residence,remote_ratio,company_location,company_size
+0,2023,SE,FT,Principal Data Scientist,80000,EUR,85847,ES,100,ES,L
+1,2023,MI,CT,ML Engineer,30000,USD,30000,US,100,US,S
+2,2023,MI,CT,ML Engineer,25500,USD,25500,US,100,US,S
+3,2023,SE,FT,Data Scientist,175000,USD,175000,CA,100,CA,M
+4,2023,SE,FT,Data Scientist,120000,USD,120000,CA,100,CA,M
+5,2023,SE,FT,Applied Scientist,222200,USD,222200,US,0,US,L
+6,2023,SE,FT,Applied Scientist,136000,USD,136000,US,0,US,L
+7,2023,SE,FT,Data Scientist,219000,USD,219000,CA,0,CA,M
+8,2023,SE,FT,Data Scientist,141000,USD,141000,CA,0,CA,M
+9,2023,SE,FT,Data Scientist,147100,USD,147100,US,0,US,M
+", agent="Senior Data Analyst", status="started"
+2025-06-07 06:12:32: task_name="None", task="Analyze the data from the database and write an analysis for Effects on salary (in USD) based on company location, size and employee experience, here is the data:
+
+index,work_year,experience_level,employment_type,job_title,salary,salary_currency,salary_in_usd,employee_residence,remote_ratio,company_location,company_size
+0,2023,SE,FT,Principal Data Scientist,80000,EUR,85847,ES,100,ES,L
+1,2023,MI,CT,ML Engineer,30000,USD,30000,US,100,US,S
+2,2023,MI,CT,ML Engineer,25500,USD,25500,US,100,US,S
+3,2023,SE,FT,Data Scientist,175000,USD,175000,CA,100,CA,M
+4,2023,SE,FT,Data Scientist,120000,USD,120000,CA,100,CA,M
+5,2023,SE,FT,Applied Scientist,222200,USD,222200,US,0,US,L
+6,2023,SE,FT,Applied Scientist,136000,USD,136000,US,0,US,L
+7,2023,SE,FT,Data Scientist,219000,USD,219000,CA,0,CA,M
+8,2023,SE,FT,Data Scientist,141000,USD,141000,CA,0,CA,M
+9,2023,SE,FT,Data Scientist,147100,USD,147100,US,0,US,M
+", agent="Senior Data Analyst", status="started"
+2025-06-07 06:15:18: task_name="None", task="Analyze the data from the database and write an analysis for Effects on salary (in USD) based on company location, size and employee experience, here is the data:
+
+index,work_year,experience_level,employment_type,job_title,salary,salary_currency,salary_in_usd,employee_residence,remote_ratio,company_location,company_size
+0,2023,SE,FT,Principal Data Scientist,80000,EUR,85847,ES,100,ES,L
+1,2023,MI,CT,ML Engineer,30000,USD,30000,US,100,US,S
+2,2023,MI,CT,ML Engineer,25500,USD,25500,US,100,US,S
+3,2023,SE,FT,Data Scientist,175000,USD,175000,CA,100,CA,M
+4,2023,SE,FT,Data Scientist,120000,USD,120000,CA,100,CA,M
+5,2023,SE,FT,Applied Scientist,222200,USD,222200,US,0,US,L
+6,2023,SE,FT,Applied Scientist,136000,USD,136000,US,0,US,L
+7,2023,SE,FT,Data Scientist,219000,USD,219000,CA,0,CA,M
+8,2023,SE,FT,Data Scientist,141000,USD,141000,CA,0,CA,M
+9,2023,SE,FT,Data Scientist,147100,USD,147100,US,0,US,M
+", agent="Senior Data Analyst", status="started"
+2025-06-07 06:21:09: task_name="None", task="Analyze the data from the database and write an analysis for Effects on salary (in USD) based on company location, size and employee experience, here is the data:
+
+{"index":0,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Principal Data Scientist","salary":80000,"salary_currency":"EUR","salary_in_usd":85847,"employee_residence":"ES","remote_ratio":100,"company_location":"ES","company_size":"L"}
+{"index":1,"work_year":2023,"experience_level":"MI","employment_type":"CT","job_title":"ML Engineer","salary":30000,"salary_currency":"USD","salary_in_usd":30000,"employee_residence":"US","remote_ratio":100,"company_location":"US","company_size":"S"}
+{"index":2,"work_year":2023,"experience_level":"MI","employment_type":"CT","job_title":"ML Engineer","salary":25500,"salary_currency":"USD","salary_in_usd":25500,"employee_residence":"US","remote_ratio":100,"company_location":"US","company_size":"S"}
+{"index":3,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Data Scientist","salary":175000,"salary_currency":"USD","salary_in_usd":175000,"employee_residence":"CA","remote_ratio":100,"company_location":"CA","company_size":"M"}
+{"index":4,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Data Scientist","salary":120000,"salary_currency":"USD","salary_in_usd":120000,"employee_residence":"CA","remote_ratio":100,"company_location":"CA","company_size":"M"}
+{"index":5,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Applied Scientist","salary":222200,"salary_currency":"USD","salary_in_usd":222200,"employee_residence":"US","remote_ratio":0,"company_location":"US","company_size":"L"}
+{"index":6,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Applied Scientist","salary":136000,"salary_currency":"USD","salary_in_usd":136000,"employee_residence":"US","remote_ratio":0,"company_location":"US","company_size":"L"}
+{"index":7,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Data Scientist","salary":219000,"salary_currency":"USD","salary_in_usd":219000,"employee_residence":"CA","remote_ratio":0,"company_location":"CA","company_size":"M"}
+{"index":8,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Data Scientist","salary":141000,"salary_currency":"USD","salary_in_usd":141000,"employee_residence":"CA","remote_ratio":0,"company_location":"CA","company_size":"M"}
+{"index":9,"work_year":2023,"experience_level":"SE","employment_type":"FT","job_title":"Data Scientist","salary":147100,"salary_currency":"USD","salary_in_usd":147100,"employee_residence":"US","remote_ratio":0,"company_location":"US","company_size":"M"}
+", agent="Senior Data Analyst", status="started"

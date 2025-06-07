@@ -1,32 +1,41 @@
-
-
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_ollama.llms import OllamaLLM
 from transformers import BartTokenizer, BartForConditionalGeneration, BartConfig,AutoModel, AutoTokenizer
 from torch import Tensor, device
 import uuid
 import pandas as pd
 import torch
 
-
-# create an object to hold the Api request data {userId, activityId, Table schema, input}
-api_request_data = {
-    "userId": str(uuid.uuid4()),
-    "activityId": str(uuid.uuid4()),
-    "tableSchema": "",
-    "input": ""
-}
-
-
-def table_relevence():
+def get_relevent_table(question, tables, headers):
     """
-    This function is used to check which table is relevant to the question
-    """
-    # call the ollama running locally with the questions and tables of the database
-    # and return the table that is relevant to the question
+    Returns the relevant table and its headers based on the question.
     
+    Args:
+        question (str): The question to be answered.
+        tables (str): A comma-separated string of table names.
+        headers (str): A comma-separated string of headers for each table.
 
-    return "dummy_table"
+    Returns:
+        str: The name of the relevant table and its headers.
+    """
+    # This function is a placeholder for the actual implementation
+    # that would determine the relevant table based on the question.
+    template = """Question: return only the name of the relevent table that we need to query to get the data for this question{question} knowing that the list of tables of the database {tables}, with the headers {headers}
+
+    Answer: select only by the relevent table and its headers, do not return any other information, just the table name and its headers"""
+
+    prompt = ChatPromptTemplate.from_template(template)
+
+    model = OllamaLLM(model="llama3")
+
+    chain = prompt | model
+
+    response = chain.invoke({"tables": tables, "headers": headers, "question": question})
+    return response['text'].strip()  # Assuming the response is a dictionary with 'text' key
 
 
+# define the erosion step function
+# this function takes a question schema as input and generates a SQL query using a pre-trained BART model
 
 def erosion_step(question_schema):
     """This function is used to genrate the SQL query from the question and table schema
@@ -212,27 +221,6 @@ def augment_sql(sql, header, rows, header_types, question, lookup_value=False):
     if len(where_conditions):
         sql_final += f"WHERE {where_final} "
     return (sql_final, table_name, agg_clause, select_cols, where_conditions)
-
-## define the device to use, cuda if available else cpu
-    ## this is used to run the model on GPU if available
-torch_device = 'cuda' if torch.cuda.is_available() else 'cpu'
-## encoding model and tokenizer
-encoding_model_name = 'shahrukhx01/paraphrase-mpnet-base-v2-fuzzy-matcher'
-encoding_model = AutoModel.from_pretrained(encoding_model_name).to(torch_device)
-encoding_tokenizer = AutoTokenizer.from_pretrained(encoding_model_name)
-
-## define data, we will define rows and header and column types of each column separately here
-rows = [['Aleksandar Radojević', '25', 'Serbia', 'Center', '1999-2000', 'Barton CC (KS)'], ['Shawn Respert', '31', 'United States', 'Guard', '1997-98', 'Michigan State'], ['Quentin Richardson', 'N/A', 'United States', 'Forward', '2013-present', 'DePaul'], ['Alvin Robertson', '7, 21', 'United States', 'Guard', '1995-96', 'Arkansas'], ['Carlos Rogers', '33, 34', 'United States', 'Forward-Center', '1995-98', 'Tennessee State'], ['Roy Rogers', '9', 'United States', 'Forward', '1998', 'Alabama'], ['Jalen Rose', '5', 'United States', 'Guard-Forward', '2003-06', 'Michigan'], ['Terrence Ross', '31', 'United States', 'Guard', '2012-present', 'Washington']]
-header = ['Player', 'No.', 'Nationality', 'Position', 'Years in Toronto', 'School/Club Team']
-header_column_types = ['text', 'text', 'text', 'text', 'text', 'text']
-
-question_schema = """What is aleksander's  nationality? 
-                        </s> <col0> Player : text <col1> No. : text <col2> Nationality : text 
-                        <col3> Position : text <col4> Years in Toronto : text <col5>  School/Club Team : text"""
-
-prediction = erosion_step(question_schema)
-final_sql, _, _, _, _ = augment_sql(prediction, header, rows, header_column_types, question=question_schema, lookup_value=False)
-print(final_sql)
-
+ 
 
 

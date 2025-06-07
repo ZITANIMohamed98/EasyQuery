@@ -27,7 +27,9 @@ llm = OllamaLLM(model="llama3",temperature=0)
 db = SQLDatabase.from_uri("sqlite:///salaries.db")
 df = pd.read_sql_query("SELECT * FROM salaries LIMIT 10", connection)
 
-data_queried = df.to_csv(index=False)
+#data_queried = df.to_csv(index=False)
+
+data_queried = df.to_json(orient="records", lines=True)
 print(data_queried)
 print("checking with the data analyst")
 data_analyst = Agent(
@@ -63,7 +65,7 @@ analyze_data = Task(
     description="Analyze the data from the database and write an analysis for {query}.",
     expected_output="Detailed analysis text",
     agent=data_analyst,
-    context=[data_queried],
+    context =[data_queried],
 )
 
 write_report = Task(
@@ -82,7 +84,7 @@ crew = Crew(
     agents=[data_analyst, report_writer],
     tasks=[analyze_data, write_report],
     process=Process.sequential,
-    verbose=2,
+    verbose=False,
     memory=False,
     output_log_file="crew.log",
 )
