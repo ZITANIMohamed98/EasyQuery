@@ -1,27 +1,48 @@
-# outbound.py
-import os
-import requests
+from AI.AnalyzersCrew.models import returnReportModel
+# from fastapi import Request, APIRouter
 
+# outbound_router = APIRouter()
+import httpx
+from AI.AnalyzersCrew.models import returnReportModel
 
-PREDICT_SQL_URL = os.getenv("PREDICT_SQL_URL", "http://localhost:8001/predict_sql")
-SQLTOOLS_URL = os.getenv("SQLTOOLS_URL", "http://localhost:8002/run_query")
+async def returnReport(report_model: returnReportModel):
+    """
+    Makes an HTTP POST request to the /returnReport endpoint using a returnReportModel instance.
+    """
+    data = {
+        "user_id": report_model.user_id,
+        "activity_id": report_model.activity_id,
+        "database_name": report_model.database_name,
+        "input": report_model.input,
+        "output": report_model.output
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "http://localhost:8000/returnReport",
+            json=data
+        )
+        response.raise_for_status()
+        return response.json()
+    
 
-def call_predict_sql(payload):
-    """Wysyła zapytanie do usługi predict_sql"""
-    try:
-        resp = requests.post(PREDICT_SQL_URL, json=payload)
-        resp.raise_for_status()
-        return resp.json().get("sql")
-    except Exception as e:
-        # Możesz rozwinąć logowanie lub obsługę błędów tu
-        return None
+import httpx
+from AI.TexttoSqlAgent.models import responseQueryModel
 
-def call_sqltools(payload):
-    """Wysyła zapytanie do SQLTools"""
-    try:
-        resp = requests.post(SQLTOOLS_URL, json=payload)
-        resp.raise_for_status()
-        return resp.json().get("data")
-    except Exception as e:
-        # Możesz rozwinąć logowanie lub obsługę błędów tu
-        return None
+async def predict_query(response_model: responseQueryModel):
+    """
+    Makes an HTTP POST request to the /predictQuery endpoint using a responseQueryModel instance.
+    """
+    data = {
+        "user_id": response_model.user_id,
+        "activity_id": response_model.activity_id,
+        "database_name": response_model.database_name,
+        "input": response_model.input,
+        "querypredicted": response_model.querypredicted
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "http://localhost:8000/predictQuery",
+            json=data
+        )
+        response.raise_for_status()
+        return response.json()
