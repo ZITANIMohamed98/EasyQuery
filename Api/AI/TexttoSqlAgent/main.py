@@ -23,7 +23,7 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     
     print("getting relevent table")
     
-    get_relevent_table = get_relevent_table( question, tables, headers )
+    relevent_table = get_relevent_table( question, tables, headers )
 
     ## define the device to use, cuda if available else cpu
         ## this is used to run the model on GPU if available
@@ -50,7 +50,7 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     question_schema = question+" </s> "+ " ".join(schema_parts)
 
     print("Question Schema:", question_schema)
-    prediction = erosion_step(question_schema)
+    prediction = erosion_step(question_schema,torch_device)
     final_sql, _, _, _, _ = augment_sql(prediction, header, rows, header_column_types, question=question_schema, lookup_value=False)
     
     print("Final SQL Query:", final_sql)
