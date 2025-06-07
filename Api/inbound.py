@@ -27,9 +27,9 @@ class ProcessInput(BaseModel):
 # --- ROUTER (to podmieni “app”) ---
 router = APIRouter()
 
-@router.get("/getDummy")
-def get_dummy():
-    return "This is a dummy response from /getdummy"
+# @router.get("/getDummy")
+# def get_dummy():
+#     return "This is a dummy response from /getdummy"
 
 @router.post("/getQuery")
 def get_query(input_data: QueryInput):
@@ -82,26 +82,26 @@ def execute_query(exec_data: ExecuteInput):
         "data": result
     }
 
-@router.post("/process")
-def process_query(input_data: ProcessInput):
-    if USE_MOCKS:
-        sql_query = "SELECT * FROM trips WHERE city='Seattle'"
-        result = [{"trip_id": 123, "city": "Seattle"}]
-        return {"sql": sql_query, "result": result}
+# @router.post("/process")
+# def process_query(input_data: ProcessInput):
+#     if USE_MOCKS:
+#         sql_query = "SELECT * FROM trips WHERE city='Seattle'"
+#         result = [{"trip_id": 123, "city": "Seattle"}]
+#         return {"sql": sql_query, "result": result}
 
-    payload = {
-        "user_input": input_data.user_input,
-        "user_id": input_data.user_id
-    }
-    sql_query = call_predict_sql(payload)
-    if not sql_query:
-        sql_query = "SELECT * FROM trips WHERE city='Seattle'"
+#     payload = {
+#         "user_input": input_data.user_input,
+#         "user_id": input_data.user_id
+#     }
+#     sql_query = call_predict_sql(payload)
+#     if not sql_query:
+#         sql_query = "SELECT * FROM trips WHERE city='Seattle'"
 
-    result = call_sqltools({
-        "query": sql_query,
-        "user_id": input_data.user_id
-    }) or [{"trip_id": 123, "city": "Seattle"}]
-    return {
-        "sql": sql_query,
-        "result": result
-    }
+#     result = call_sqltools({
+#         "query": sql_query,
+#         "user_id": input_data.user_id
+#     }) or [{"trip_id": 123, "city": "Seattle"}]
+#     return {
+#         "sql": sql_query,
+#         "result": result
+#     }

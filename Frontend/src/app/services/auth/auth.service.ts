@@ -1,18 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // Add this import
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-private static userCounter = 0;  
+  private static userCounter = 0;  
   private loggedIn = false;
-  private userId: number | null = null;
-  constructor(private router: Router) {}
+private userId: string = 'db_user1';  
+private baseApi = 'http://localhost:8000'; // Add your API base URL
 
-login(email: string, password: string): boolean {
+  constructor(private router: Router, private http: HttpClient) {} // Inject HttpClient
+
+  login(email: string, password: string): boolean {
     if (email && password) {
-      this.loggedIn = true;
-      AuthService.userCounter += 1;  
-      this.userId = AuthService.userCounter;  
+      this.loggedIn = true;  
+
+      // Send user id to backend
+      this.http.post(`${this.baseApi}/userLogin`, this.userId ).subscribe();
+
       return true;
     }
     return false;
@@ -27,12 +32,14 @@ login(email: string, password: string): boolean {
     return this.loggedIn;
   }
 
-  getUserId(): number | null {
-    console
+  getUserId(): string | null {
     return this.userId;
   }
 
-   getAllowedDatabases(): string[] {
-    return ['AdventureWorks2022', 'SalesDB', 'InventoryDB'];
-  }
+getAllowedDatabases() {
+  // Assumes your backend has an endpoint like /getAllowedDatabases?user_id=...
+  return this.http.get<string[]>(`${this.baseApi}/getAllowedDatabases`, {
+  });
 }
+}
+
