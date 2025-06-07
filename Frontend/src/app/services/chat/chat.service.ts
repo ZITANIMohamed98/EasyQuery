@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 
 export interface ChatMessage {
@@ -11,33 +12,50 @@ export interface ChatMessage {
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   messages: ChatMessage[] = [];
+  private baseApi = 'http://localhost:8000/';
 
   queryReady = new EventEmitter<string>(); // SQL is emitted when ready for execution
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   /**
    * Called when user sends a query request.
    * Adds user message and emits a SQL query.
    */
+
   getQuery(userInput: string) {
     // Add user's message
     this.addMessage({ sender: 'You', text: userInput, type: 'user' });
 
-    // Simulate Text-to-SQL (replace this with real API call later)
-    const mockSql = `SELECT * FROM Products WHERE Name LIKE '%${userInput}%'`;
+    // Use GET request, sending the query as a URL parameter
+    this.http
+      .get<{ sql: string }>(
+        `${this.baseApi}?query=${encodeURIComponent(userInput)}`
+      )
+      .subscribe({
+        next: (response) => {
+          const sql = response.sql;
 
-    // Add bot message with generated SQL, flagged as awaiting execution
-    this.addMessage({
-      sender: 'Bot',
-      text: `Generated SQL:\n${mockSql}`,
-      type: 'sql',
-      sql: mockSql,
-      awaitingExecution: true
-    });
+          // Add bot message with generated SQL, flagged as awaiting execution
+          this.addMessage({
+            sender: 'Bot',
+            text: `Generated SQL:\n${sql}`,
+            type: 'sql',
+            sql: sql,
+            awaitingExecution: true,
+          });
 
-    // Emit the SQL query so UI can ask user for confirmation
-    this.queryReady.emit(mockSql);
+          // Emit the SQL query so UI can ask user for confirmation
+          this.queryReady.emit(sql);
+        },
+        error: (err) => {
+          this.addMessage({
+            sender: 'Bot',
+            text: 'Sorry, there was an error generating the SQL.',
+            type: 'error',
+          });
+        },
+      });
   }
 
   /**
@@ -46,21 +64,31 @@ export class ChatService {
    */
   getQueryResult(sql: string) {
     // Notify user execution is happening
-    this.addMessage({ sender: 'Bot', text: 'Executing the query...', type: 'confirm' });
-
-    // Mock data result (replace with backend response)
-    const mockResult = `
-ID | Name            | Price
----|------------------|-------
-1  | Sample Product   | $25.00
-2  | Another Item     | $40.00
-`;
-
     this.addMessage({
       sender: 'Bot',
-      text: mockResult.trim(),
-      type: 'result'
+      text: 'Executing the query...',
+      type: 'confirm',
     });
+
+    // Call backend to execute the SQL and get the result
+    this.http
+      .post<{ result: string }>(`${this.baseApi}/execute-query`, { sql })
+      .subscribe({
+        next: (response) => {
+          this.addMessage({
+            sender: 'Bot',
+            text: response.result,
+            type: 'result',
+          });
+        },
+        error: (err) => {
+          this.addMessage({
+            sender: 'Bot',
+            text: 'Sorry, there was an error executing the SQL.',
+            type: 'error',
+          });
+        },
+      });
   }
 
   /**
@@ -76,6 +104,4 @@ ID | Name            | Price
   clearMessages() {
     this.messages = [];
   }
-
-  
 }
