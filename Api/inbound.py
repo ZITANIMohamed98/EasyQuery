@@ -1,11 +1,11 @@
 # inbound.py
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, constr
 import os
 from outbound import call_predict_sql, call_sqltools
 from dotenv import load_dotenv
-from .Models import str_uuid, getQueryModel, predictQueryModel, responseQueryModel, executeQueryModel
-from ..AI.SqltoTextAgent.inference import text_to_sql
+from AI.TexttoSqlAgent.models import getQueryModel, responseQueryModel, predictQueryModel
+from AI.TexttoSqlAgent.main import text_to_sql
 
 load_dotenv()
 
@@ -21,42 +21,43 @@ router = APIRouter()
 # def get_dummy():
 #     return "This is a dummy response from /getdummy"
 # adding the route that reads the getQueryModel type and invokes sqltotext method to get the sql query
-  
-Request = getQueryModel()
+#    = getQueryModel("tetet","63536725-2b3c-4f8d-9f1e-0a1b2c3d4e5f",'test_db','SELECT * FROM test_table')
 
 @router.post("/getQuery")
 async def get_query(request: Request):
     data = await request.json()
+    # Deserialize the request body into the getQueryModel
+    # Deserialize the data into the getQueryModel
+    getQuerydata = getQueryModel(
+         user_id=data["user_id"],
+         activity_id=data["activity_id"],
+         database_name=data["database_name"],
+         input=data["input"]
+    )
     # deserialize the data into the getQueryModel
-    input_data = getQueryModel(**data)
     # Call the text_to_sql function to generate the SQL query
-    # sql_query = text_to_sql(input_data)
+    sql_query = text_to_sql(getQuerydata)
+    return data["activity_id"]
+
+
+@router.get("/listAllowedDbs")
+def list_allowed_dbs(request: Request):
+    user_id = request.query_params.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User ID is required")
+
+    # Mock response for allowed databases
+    allowed_dbs = ["trips", "users", "orders"]
+    return {"user_id": user_id, "allowed_databases": allowed_dbs}
+
+
+@router.post("/executeQuery")
+def execute_query(exec_data: ExecuteInput):
 
 
 
-    #init
-    # if USE_MOCKS:
-    #     sql_query = f"SELECT * FROM {input_data.database_name} WHERE city='Seattle'"
-    #     return {
-    #         "user_id": input_data.user_id,
-    #         "activity_id": input_data.activity_id,
-    #         "database_name": input_data.database_name,
-    #         "query": sql_query
-    #     }
 
-    # payload = input_data.dict()
-    # sql_query = call_predict_sql(payload)
-#     if not sql_query:
-#         raise HTTPException(status_code=400, detail="No SQL generated")
-#     return {
-#         "user_id": input_data.user_id,
-#         "activity_id": input_data.activity_id,
-#         "database_name": input_data.database_name,
-#         "query": sql_query
-#     }
 
-# @router.post("/executeQuery")
-# def execute_query(exec_data: ExecuteInput):
 #     if USE_MOCKS:
 #         result = [{"trip_id": 123, "city": "Seattle", "database": exec_data.database_name}]
 #         return {

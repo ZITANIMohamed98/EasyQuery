@@ -1,7 +1,6 @@
 # outbound.py
 import os
 import requests
-from .Models.main import returnReportModel, executeQueryModel, responseQueryModel, predictQueryModel, getQueryModel
 
 
 PREDICT_SQL_URL = os.getenv("PREDICT_SQL_URL", "http://localhost:8001/predict_sql")

@@ -16,6 +16,8 @@ from langchain_core.callbacks.base import BaseCallbackHandler
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama.llms import OllamaLLM
 
+def test():
+    print("Crew is working!")
 
 df = pd.read_csv("ds_salaries.csv")
 df.head()

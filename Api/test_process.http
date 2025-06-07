@@ -2,11 +2,8 @@
 POST http://localhost:8000/getQuery
 Content-Type: application/json
 
-{
-  "user_id": "user42",
-  "activity_id": "hack2024",
-  "database_name": "trips",
-  "input": "Show all completed trips in Seattle"
+
+{"user_id": "user42","activity_id": "hack2024","database_name": "trips","input": "Show all completed trips in Seattle"
 }
 
 ### Test /executeQuery (POST)
