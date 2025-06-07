@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
+import { GetQueryModel } from '../../data-models/get-query-model';
 
 export interface ChatMessage {
   sender: string;
@@ -23,12 +24,7 @@ export class ChatService {
    * Adds user message and emits a SQL query.
    */
 
-  getQuery(inputData: {
-  user_id: string;
-  activity_id: string;
-  database_name: string;
-  input: string;
-}) {
+getQuery(inputData: GetQueryModel) {
   return this.http.post<any>(`${this.baseApi}/getQuery`, inputData);
 }
 

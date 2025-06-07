@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DatabaseService } from '../../services/database/database.service';
 
 @Component({
   selector: 'app-database-status',
@@ -11,7 +10,6 @@ import { DatabaseService } from '../../services/database/database.service';
 export class DatabaseStatusComponent {
   selectedDb: string | null = null;
 
-  constructor(private dbService: DatabaseService) {
-    this.selectedDb = this.dbService.getSelectedDatabase();
+  constructor() {
   }
 }

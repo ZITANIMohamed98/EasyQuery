@@ -2,7 +2,6 @@
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, constr
 import os
-from outbound import call_predict_sql, call_sqltools
 from dotenv import load_dotenv
 from AI.TexttoSqlAgent.models import getQueryModel, listAllowedDbModel
 from AI.AnalyzersCrew.models import executeQueryModel

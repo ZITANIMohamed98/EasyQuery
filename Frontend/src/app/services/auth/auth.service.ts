@@ -1,22 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http'; // Add this import
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private static userCounter = 0;  
   private loggedIn = false;
-private userId: string = 'db_user1';  
-private baseApi = 'http://localhost:8000'; // Add your API base URL
+  private userId: string = 'db_user1';  
+  private baseApi = 'http://localhost:8000';
 
-  constructor(private router: Router, private http: HttpClient) {} // Inject HttpClient
+  constructor(private router: Router, private http: HttpClient) {}
 
   login(email: string, password: string): boolean {
     if (email && password) {
       this.loggedIn = true;  
-
       // Send user id to backend
       this.http.post(`${this.baseApi}/userLogin`, this.userId ).subscribe();
+
+      // Immediately fetch allowed databases for this user
+      this.getAllowedDatabases(this.userId).subscribe(dbs => {
+        // You can store or process the dbs here as needed
+        console.log('Allowed databases:', dbs);
+      });
 
       return true;
     }
@@ -36,10 +41,8 @@ private baseApi = 'http://localhost:8000'; // Add your API base URL
     return this.userId;
   }
 
-getAllowedDatabases() {
-  // Assumes your backend has an endpoint like /getAllowedDatabases?user_id=...
-  return this.http.get<string[]>(`${this.baseApi}/getAllowedDatabases`, {
-  });
+  getAllowedDatabases(userId: string) {
+    // Call the backend endpoint with user_id as a query parameter
+    return this.http.get<string[]>(`${this.baseApi}/listAllowedDbs?user_id=${userId}`);
+  }
 }
-}
-

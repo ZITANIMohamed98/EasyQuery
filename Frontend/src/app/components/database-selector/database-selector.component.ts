@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { DatabaseService } from '../../services/database/database.service';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-database-selector',
@@ -9,17 +9,24 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
 })
-export class DatabaseSelectorComponent {
+export class DatabaseSelectorComponent implements OnInit {
   databases: string[] = [];
   selectedDb: string | null = null;
+  @Output() dbSelected = new EventEmitter<string>();
 
-  constructor(private dbService: DatabaseService) {
-    this.databases = dbService.getDatabases();
-    this.selectedDb = dbService.getSelectedDatabase();
+  constructor(private authService: AuthService) {}
+
+  ngOnInit() {
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.authService.getAllowedDatabases(userId).subscribe((dbs: string[]) => {
+        this.databases = dbs;
+      });
+    }
   }
 
   onDbChange(db: string) {
     this.selectedDb = db;
-    this.dbService.setSelectedDatabase(db);
+    this.dbSelected.emit(db);
   }
 }
