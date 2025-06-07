@@ -21,11 +21,15 @@ Content-Type: application/json
   "query": "SELECT * FROM trips WHERE city='Seattle' AND status='completed'"
 }
 
-### (Old) Test /process (optional)
-POST http://localhost:8000/process
+
+### Test /returnReport (POST)
+POST http://localhost:8000/returnReport
 Content-Type: application/json
 
 {
-  "user_input": "Show all trips in Seattle",
-  "user_id": "demo"
+  "user_id": "user42",
+  "activity_id": "hack2024",
+  "database_name": "trips",
+  "input": "Show all completed trips in Seattle",
+  "output": "Report generated successfully (mocked)"
 }
