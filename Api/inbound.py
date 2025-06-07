@@ -8,7 +8,7 @@ from AI.TexttoSqlAgent.models import getQueryModel, listAllowedDbModel
 from AI.AnalyzersCrew.models import executeQueryModel
 
 from AI.TexttoSqlAgent.main import text_to_sql
-
+from SQLTools.main import get_allowed_dbs, initiate_database_transaction, execute_query
 load_dotenv()
 
 
@@ -43,21 +43,13 @@ async def get_query(request: Request):
 
 
 @router.get("/listAllowedDbs")
-def list_allowed_dbs(request: Request):
-    user_id = request.query_params.get("user_id")
+async def list_allowed_dbs(user_id: str):
+    print (f"Listing allowed databases for user_id: {user_id}")
     if not user_id:
         raise HTTPException(status_code=400, detail="User ID is required")
 
-    # Example: fetch allowed databases for the user (mocked here)
-    allowed_dbs = ["trips", "users", "orders"]
-    db_model = listAllowedDbModel(
-        user_id=user_id, 
-        database_list=allowed_dbs
-        )
-    return {
-        "user_id": db_model.user_id,
-        "allowed_databases": db_model.database_list
-    }
+    dbs = get_allowed_dbs(user_id)
+    return dbs
 
 
 @router.post("/executeQuery")

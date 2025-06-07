@@ -1,0 +1,34 @@
+
+{
+    "departments": {
+        "HR": {
+            "databases": [
+                "hr_db1",
+                "hr_db2"
+            ]
+        },
+        "IT": {
+            "databases": [
+                "it_db1",
+                "it_db2"
+            ]
+        },
+        "Finance": {
+            "databases": [
+                "finance_db1",
+                "finance_db2"
+            ]
+        }
+    },
+    "Users": {
+        "db_user1": {
+            "department": "HR"
+        },
+        "db_user2": {
+            "department": "IT"
+        },
+        "db_user3": {
+            "department": "Finance"
+        }
+    }
+}

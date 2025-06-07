@@ -7,7 +7,7 @@ Content-Type: application/json
 }
 
 ### Test /listAllowedDbs (GET)
-GET http://localhost:8000/listAllowedDbs?user_id=user42
+GET http://localhost:8000/listAllowedDbs?user_id=db_user1
 
 ### Test /executeQuery (POST)
 POST http://localhost:8000/executeQuery
