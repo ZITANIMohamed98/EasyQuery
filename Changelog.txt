@@ -1,1 +1,7 @@
 version 1.0:
+    -Finish the implementation of the AI Model transactions
+    -Set up the Api service on the AI part
+    -Add call management on the Frontend side and Finalize the UI
+
+version 2.0:
+    -Finish the Trsactions between the Api and the 

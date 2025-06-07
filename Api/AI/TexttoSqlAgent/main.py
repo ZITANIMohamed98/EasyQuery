@@ -4,14 +4,26 @@ import uuid
 import pandas as pd
 import torch
 from .utils import get_relevent_table, erosion_step, augment_sql
-from .models import getQueryModel
+from .models import getQueryModel, responseQueryModel
+import sqlvalidator
+from Api.outbound import predict_query
+import asyncio
 
-async def text_to_sql(ModelInput: getQueryModel) -> str:
+async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
+    
+    question= predictQueryModel.input
+    user_id = predictQueryModel.user_id
+    activity_id = predictQueryModel.activity_id
+    database_name = predictQueryModel.database_name
+    # check the schemas of the database and save the tables
+
+
     tables= "actors, finance, nba"
     headers="actors: [id, name, movie, title, genre, rating] nba: [player, team, points, championship, year] finance:[ id, amount, date ]"
-    question= "What is numbers of players that have scored more than 30 points in a game?"
-
-    relevent_table = get_relevent_table(question, tables, headers)
+    
+    print("getting relevent table")
+    
+    get_relevent_table = get_relevent_table( question, tables, headers )
 
     ## define the device to use, cuda if available else cpu
         ## this is used to run the model on GPU if available
@@ -25,11 +37,35 @@ async def text_to_sql(ModelInput: getQueryModel) -> str:
     rows = [['Aleksandar Radojević', '25', 'Serbia', 'Center', '1999-2000', 'Barton CC (KS)'], ['Shawn Respert', '31', 'United States', 'Guard', '1997-98', 'Michigan State'], ['Quentin Richardson', 'N/A', 'United States', 'Forward', '2013-present', 'DePaul'], ['Alvin Robertson', '7, 21', 'United States', 'Guard', '1995-96', 'Arkansas'], ['Carlos Rogers', '33, 34', 'United States', 'Forward-Center', '1995-98', 'Tennessee State'], ['Roy Rogers', '9', 'United States', 'Forward', '1998', 'Alabama'], ['Jalen Rose', '5', 'United States', 'Guard-Forward', '2003-06', 'Michigan'], ['Terrence Ross', '31', 'United States', 'Guard', '2012-present', 'Washington']]
     header = ['Player', 'No.', 'Nationality', 'Position', 'Years in Toronto', 'School/Club Team']
     header_column_types = ['text', 'text', 'text', 'text', 'text', 'text']
+    
+    
 
-    question_schema = """What is aleksander's  nationality? 
-                            </s> <col0> Player : text <col1> No. : text <col2> Nationality : text 
-                            <col3> Position : text <col4> Years in Toronto : text <col5>  School/Club Team : text"""
+    # Generate the schema string with incrementing <colX> tags
+    schema_parts = [
+        f"<col{i}> {col} : {col_type}"
+        for i, (col, col_type) in enumerate(zip(header, header_column_types))
+    ]
 
+
+    question_schema = question+" </s> "+ " ".join(schema_parts)
+
+    print("Question Schema:", question_schema)
     prediction = erosion_step(question_schema)
     final_sql, _, _, _, _ = augment_sql(prediction, header, rows, header_column_types, question=question_schema, lookup_value=False)
-    return(final_sql)
+    
+    print("Final SQL Query:", final_sql)
+
+    sql_query = sqlvalidator.parse(final_sql)
+
+    if not sql_query.is_valid():
+         print("Invalid SQL query generated.")
+    else:
+        # If the SQL query is valid, proceed to responseQueryModel
+        output = responseQueryModel(final_sql,question,user_id,activity_id,database_name)
+        predict_query(output)
+        print("SQL query generated successfully:", final_sql)
+    return output
+
+
+input = getQueryModel('What is the name of the player who scored the most points in the NBA?')
+output = asyncio.run(text_to_sql(input))

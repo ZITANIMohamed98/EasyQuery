@@ -224,3 +224,7 @@ def augment_sql(sql, header, rows, header_types, question, lookup_value=False):
  
 
 
+def read_training_data():
+    df = pd.read_parquet('train-00000-of-00001.parquet')
+
+    print(df.head())

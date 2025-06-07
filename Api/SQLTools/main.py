@@ -3,6 +3,8 @@ import os
 import sys  
 from sqlalchemy import create_engine, text
 import json
+from 
+
 # based on user Id, read the database_access.json file to check which department the user belongs to and get the databases list
 def get_allowed_dbs(user_id: str) -> list[str]:
     """
@@ -26,21 +28,16 @@ def get_allowed_dbs(user_id: str) -> list[str]:
 
 def initiate_database_transaction():
     # Create a database connection
+    print("Initiating database transaction...")
     DATABASE_URL = os.getenv("DATABASE_URL")
     if not DATABASE_URL:
         print("Error: DATABASE_URL environment variable is not set.")
-        sys.exit(1)
+        return []
     engine = create_engine(DATABASE_URL)
     
-    # querry the tables to list the tables in the database
-    with engine.connect() as connection:
-        result = connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema='public'"))
-        tables = [row['table_name'] for row in result]
-        if not tables:
-            print("No tables found in the database.")
-            return []
-        else:
-            return tables
+
+    
+    relevent_table = get_relevent_table(question, tables, headers)
 
 # This script connects to a database and executes a SQL query passed as a command line argument.
 def execute_query(query, params=None):

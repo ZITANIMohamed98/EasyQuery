@@ -1,9 +1,6 @@
-from AI.AnalyzersCrew.models import returnReportModel
-# from fastapi import Request, APIRouter
-
-# outbound_router = APIRouter()
 import httpx
-from AI.AnalyzersCrew.models import returnReportModel
+from .AI.TexttoSqlAgent.models import responseQueryModel
+from .AI.AnalyzersCrew.models import returnReportModel
 
 async def returnReport(report_model: returnReportModel):
     """
@@ -25,8 +22,6 @@ async def returnReport(report_model: returnReportModel):
         return response.json()
     
 
-import httpx
-from AI.TexttoSqlAgent.models import responseQueryModel
 
 async def predict_query(response_model: responseQueryModel):
     """

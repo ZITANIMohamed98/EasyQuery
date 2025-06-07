@@ -22,11 +22,11 @@ class listAllowedDbModel:
 
 class responseQueryModel:
     # contructor to initialize the object with default values
-    def __init__(self, **data):
-        super().__init__(**data)
+    def __init__(self, querypredicted=None, input='', user_id=None, activity_id=None, database_name='default_db'):
+        
         self.querypredicted = "SELECT * FROM table WHERE condition"  # Default value for querypredicted
-        self.input = data.get('input', '')  # Ensure input is set if not provided
+        self.input = str # Ensure input is set if not provided
         self.user_id = str(uuid.uuid4())  # Generate a new UUID for user_id
         self.activity_id = str(uuid.uuid4())  # Generate a new UUID for activity_id
-        self.database_name = data.get('database_name', 'default_db')  # Default database name if not provided
+        self.database_name = str  # Default database name if not provided
 
