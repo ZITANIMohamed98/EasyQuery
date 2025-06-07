@@ -4,11 +4,12 @@ import sys
 from sqlalchemy import create_engine, text
 import json
 # based on user Id, read the database_access.json file to check which department the user belongs to and get the databases list
-def list_allowed_databases(user_id):
+def get_allowed_dbs(user_id: str) -> list[str]:
     """
     Reads the database_access.json file and returns the list of databases
     accessible to the user's department.
     """
+    print(f"Listing databases for user {user_id}...")
     try:
         with open('database_access.json', 'r') as file:
                 data = json.load(file)
@@ -23,7 +24,7 @@ def list_allowed_databases(user_id):
         print("Error: database_access.json file not found.")
         return []
 
-def initiate_database_transaction()
+def initiate_database_transaction():
     # Create a database connection
     DATABASE_URL = os.getenv("DATABASE_URL")
     if not DATABASE_URL:
