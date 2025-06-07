@@ -1,0 +1,9 @@
+transformers
+torch
+pandas
+crewai
+langchain-community
+langchain-ollama
+langchain-experimental
+langchain-core
+sqlalchemy
