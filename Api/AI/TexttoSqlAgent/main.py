@@ -3,10 +3,11 @@ from torch import Tensor, device
 import uuid
 import pandas as pd
 import torch
-from utils import get_relevent_table, erosion_step, augment_sql
-from models import getQueryModel, responseQueryModel
+from .utils import get_relevent_table, erosion_step, augment_sql
+from .models import getQueryModel, responseQueryModel
 import sqlvalidator
 from Api.outbound import predict_query
+import asyncio
 
 async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     
@@ -20,8 +21,9 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     tables= "actors, finance, nba"
     headers="actors: [id, name, movie, title, genre, rating] nba: [player, team, points, championship, year] finance:[ id, amount, date ]"
     
+    print("getting relevent table")
     
-    get_relevent_table = get_relevent_table(question,tables, headers )
+    get_relevent_table = get_relevent_table( question, tables, headers )
 
     ## define the device to use, cuda if available else cpu
         ## this is used to run the model on GPU if available
@@ -43,20 +45,27 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
         f"<col{i}> {col} : {col_type}"
         for i, (col, col_type) in enumerate(zip(header, header_column_types))
     ]
-    schema_str = question+" </s> "+ " ".join(schema_parts)
+
+
+    question_schema = question+" </s> "+ " ".join(schema_parts)
+
+    print("Question Schema:", question_schema)
     prediction = erosion_step(question_schema)
     final_sql, _, _, _, _ = augment_sql(prediction, header, rows, header_column_types, question=question_schema, lookup_value=False)
     
-    sql_query = sqlvalidator.parse(text(final_sql))
+    print("Final SQL Query:", final_sql)
+
+    sql_query = sqlvalidator.parse(final_sql)
 
     if not sql_query.is_valid():
-	    print(sql_query.errors)
-          
-    output = responseQueryModel(querypredicted,question,user_id,activity_id,database_name)
-    predict_query(output)
-
+         print("Invalid SQL query generated.")
+    else:
+        # If the SQL query is valid, proceed to responseQueryModel
+        output = responseQueryModel(final_sql,question,user_id,activity_id,database_name)
+        predict_query(output)
+        print("SQL query generated successfully:", final_sql)
     return output
 
 
-input = predictQueryModel('user_db1', '26262', 'test', "What is the name of the player who scored the most points in the NBA?")
-text_to_sql()
+input = getQueryModel('What is the name of the player who scored the most points in the NBA?')
+output = asyncio.run(text_to_sql(input))

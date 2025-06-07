@@ -16,3 +16,4 @@ pyarrow
 fastparquet
 sqlvalidator
 pymongo
+asyncio

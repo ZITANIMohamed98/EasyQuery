@@ -1,6 +1,6 @@
 import httpx
-from AI.TexttoSqlAgent.models import responseQueryModel
-from AI.AnalyzersCrew.models import returnReportModel
+from .AI.TexttoSqlAgent.models import responseQueryModel
+from .AI.AnalyzersCrew.models import returnReportModel
 
 async def returnReport(report_model: returnReportModel):
     """
