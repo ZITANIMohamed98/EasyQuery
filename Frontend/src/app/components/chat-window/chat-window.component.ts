@@ -19,16 +19,7 @@ export class ChatWindowComponent implements AfterViewChecked {
   constructor(public chatService: ChatService) {}
 
   ngAfterViewChecked() {
-    this.scrollToBottom();
     Prism.highlightAllUnder(this.chatWindow.nativeElement);
-  }
-
-  private scrollToBottom(): void {
-    try {
-      this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
-    } catch (err) {
-      console.error('Could not scroll chat window:', err);
-    }
   }
 
 copyMessage(event: MouseEvent, text: string, index: number): void {
@@ -44,13 +35,28 @@ copyMessage(event: MouseEvent, text: string, index: number): void {
 }
 
 
-  executeQuery(sql: string, index: number) {
-    // Remove the execute button by clearing awaitingExecution flag
-    this.chatService.messages[index].awaitingExecution = false;
+executeQuery(sql: string, index: number) {
+  // Remove the execute button by clearing awaitingExecution flag
+  this.chatService.messages[index].awaitingExecution = false;
 
-    // Execute the SQL (mock or real)
-    this.chatService.getQueryResult(sql);
-  }
+  // Prepare the data for executeQuery
+  const message = this.chatService.messages[index];
+  this.chatService.executeQuery({
+    user_id: message.sender || 'user1',
+    activity_id: 'act1',
+    database_name: 'mydb',
+    input: message.text,
+    query: sql
+  }).subscribe(response => {
+    console.log('ExecuteQuery response:', response);
+    // Optionally, you can push the result to the chat messages here
+    this.chatService.addMessage({
+      sender: 'system',
+      text: JSON.stringify(response.data),
+      type: 'result'
+    });
+  });
+}
 
   private static readonly SQL_KEYWORDS = [
     'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'DROP', 'FROM', 'WHERE'

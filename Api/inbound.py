@@ -27,6 +27,10 @@ class ProcessInput(BaseModel):
 # --- ROUTER (to podmieni “app”) ---
 router = APIRouter()
 
+@router.get("/getDummy")
+def get_dummy():
+    return "This is a dummy response from /getdummy"
+
 @router.post("/getQuery")
 def get_query(input_data: QueryInput):
     if USE_MOCKS:
