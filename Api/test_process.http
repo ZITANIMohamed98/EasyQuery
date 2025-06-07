@@ -1,3 +1,27 @@
+### Test /getQuery (POST)
+POST http://localhost:8000/getQuery
+Content-Type: application/json
+
+{
+  "user_id": "user42",
+  "activity_id": "hack2024",
+  "database_name": "trips",
+  "input": "Show all completed trips in Seattle"
+}
+
+### Test /executeQuery (POST)
+POST http://localhost:8000/executeQuery
+Content-Type: application/json
+
+{
+  "user_id": "user42",
+  "activity_id": "hack2024",
+  "database_name": "trips",
+  "input": "Show all completed trips in Seattle",
+  "query": "SELECT * FROM trips WHERE city='Seattle' AND status='completed'"
+}
+
+### (Old) Test /process (optional)
 POST http://localhost:8000/process
 Content-Type: application/json
 

@@ -1,0 +1,112 @@
+.chat-input-container {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.5s ease;
+  padding: 0 23rem;
+  background-color: #f9fafc;
+}
+
+.chat-input-container.centered {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.chat-input-container:not(.centered) {
+  bottom: 0;
+  padding-bottom: 2rem;
+}
+
+.initial-prompt {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.chat-input {
+  width: 100%;
+  border-top: 1px solid #e5e7eb;
+}
+
+.chat-input-container.centered .chat-input {
+  border-top: none;
+}
+
+.input-wrapper {
+  position: relative;
+  flex: 1;
+  width: 700px;
+}
+
+/* ... Keep your existing input-wrapper input and button styles ... */
+
+
+.input-wrapper input {
+  width: 100%;
+  padding: 0.75rem 3rem 0.75rem 0.75rem; /* right padding for the button */
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+}
+
+.input-wrapper button {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%) scale(0.95);
+  background-color: transparent;
+  color: #3b82f6;
+  border: none;
+  font-size: 1.25rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+.input-wrapper button.visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.input-wrapper button:hover {
+  color: #2563eb;
+}
+
+
+.confirm-prompt-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.confirm-prompt {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.confirm-prompt pre {
+  background: #f0f0f0;
+  padding: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 6px;
+  font-family: monospace;
+  margin-bottom: 1rem;
+}

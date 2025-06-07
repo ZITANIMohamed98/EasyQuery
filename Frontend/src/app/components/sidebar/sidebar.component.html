@@ -1,0 +1,14 @@
+<div class="sidebar">
+  <div class="logo-container">EasyQuery</div>
+  <!-- <input class="search" placeholder="Search..." /> -->
+  <div class="chat-list">
+    <div class="chat-list-header-wrapper">
+      <div class="chat-list-header">Chats</div>
+      <div class="new-chat-button">
+        <i class="bi bi-pencil-square"
+        title="Start a new chat"></i>
+      </div>
+    </div>
+    <div *ngFor="let chat of chats" class="chat-item">{{ chat.title }}</div>
+  </div>
+</div>

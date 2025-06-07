@@ -1,0 +1,29 @@
+<div class="chat-input-container" [class.centered]="!messageSent">
+  <div *ngIf="!messageSent" class="initial-prompt">
+    How can I help you?
+  </div>
+
+  <div class="chat-input">
+    <div class="input-wrapper">
+      <input
+        type="text"
+        [(ngModel)]="inputText"
+        placeholder="What would you like to query?"
+        (keydown.enter)="sendMessage()"
+        (focus)="inputFocused = true"
+        (blur)="inputFocused = false"
+      />
+      <button
+        (mousedown)="sendMessage()"
+        [class.visible]="inputText.trim().length > 0 && inputFocused"
+      >
+        <i class="bi bi-arrow-up"></i>
+      </button>
+    </div>
+    <!-- Display the SQL query returned from sendMessage -->
+    <div *ngIf="lastQuery" class="query-output">
+      <strong>Generated SQL:</strong>
+      <pre>{{ lastQuery }}</pre>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<div class="db-selector">
+  <label for="db">Select a Database:</label>
+  <select id="db" [value]="selectedDb" (change)="onDbChange($any($event.target).value)">
+    <option disabled selected>Select...</option>
+    <option *ngFor="let db of databases" [value]="db">{{ db }}</option>
+  </select>
+</div>
