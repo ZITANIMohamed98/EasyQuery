@@ -3,7 +3,7 @@ from torch import Tensor, device
 import uuid
 import pandas as pd
 import torch
-
+from .utils import get_relevent_table, erosion_step, augment_sql
 
 tables= "actors, finance, nba"
 headers="actors: [id, name, movie, title, genre, rating] nba: [player, team, points, championship, year] finance:[ id, amount, date ]"
