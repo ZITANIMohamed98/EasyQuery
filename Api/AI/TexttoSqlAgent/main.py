@@ -6,7 +6,7 @@ import torch
 from .utils import get_relevent_table, erosion_step, augment_sql
 from .models import getQueryModel, responseQueryModel
 import sqlvalidator
-from Api.outbound import predict_query
+import httpx
 import asyncio
 
 async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
@@ -67,5 +67,25 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     return output
 
 
-input = getQueryModel('What is the name of the player who scored the most points in the NBA?')
-output = asyncio.run(text_to_sql(input))
+# input = getQueryModel('What is the name of the player who scored the most points in the NBA?')
+# output = asyncio.run(text_to_sql(input))
+
+
+async def predict_query(response_model: responseQueryModel):
+    """
+    Makes an HTTP POST request to the /predictQuery endpoint using a responseQueryModel instance.
+    """
+    data = {
+        "user_id": response_model.user_id,
+        "activity_id": response_model.activity_id,
+        "database_name": response_model.database_name,
+        "input": response_model.input,
+        "querypredicted": response_model.querypredicted
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "http://localhost:8000/predictQuery",
+            json=data
+        )
+        response.raise_for_status()
+        return response.json()
