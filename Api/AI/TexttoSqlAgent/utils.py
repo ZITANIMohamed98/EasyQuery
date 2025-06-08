@@ -10,7 +10,7 @@ torch_device = 'cuda' if torch.cuda.is_available() else 'cpu'
 encoding_model_name = 'shahrukhx01/paraphrase-mpnet-base-v2-fuzzy-matcher'
 encoding_model = AutoModel.from_pretrained(encoding_model_name).to(torch_device)
 encoding_tokenizer = AutoTokenizer.from_pretrained(encoding_model_name)
-def get_relevent_table(question, tables, headers):
+async def get_relevent_table(question, tables, headers):
     """
     Returns the relevant table and its headers based on the question.
     
@@ -46,7 +46,7 @@ def get_relevent_table(question, tables, headers):
 # define the erosion step function
 # this function takes a question schema as input and generates a SQL query using a pre-trained BART model
 
-def erosion_step(question_schema, torch_device):
+async def erosion_step(question_schema, torch_device):
     """This function is used to genrate the SQL query from the question and table schema
     It uses a pre-trained BART model to generate the SQL query.
     """
@@ -74,7 +74,7 @@ def erosion_step(question_schema, torch_device):
 
 
 ## define the helper functions below
-def cos_sim(a: Tensor, b: Tensor):
+async def cos_sim(a: Tensor, b: Tensor):
     """
     borrowed from sentence transformers repo
     Computes the cosine similarity cos_sim(a[i], b[j]) for all i and j.
@@ -98,13 +98,13 @@ def cos_sim(a: Tensor, b: Tensor):
 
 
 #Mean Pooling - Take attention mask into account for correct averaging
-def mean_pooling(model_output, attention_mask):
+async def mean_pooling(model_output, attention_mask):
     token_embeddings = model_output[0] #First element of model_output contains all token embeddings
     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
 ## get embedding of a word
-def get_embedding(value):
+async def get_embedding(value):
     value = value.lower()
     value = [" ".join([x for x in value])]
     # Tokenize sentences
@@ -115,11 +115,11 @@ def get_embedding(value):
         model_output = encoding_model(**encoded_input)
 
     # Perform pooling. In this case, max pooling.
-    embedding = mean_pooling(model_output, encoded_input['attention_mask'])
+    embedding = await mean_pooling(model_output, encoded_input['attention_mask'])
     return embedding
 
 ## encodes categorical data into vector space
-def encode_data(data, header, header_types):
+async def encode_data(data, header, header_types):
     table = pd.DataFrame(data, columns=header)
     data = {}
     #cell = " ".join([x for x in generated_data])
@@ -128,15 +128,16 @@ def encode_data(data, header, header_types):
         if header_type_val == 'text':
             for value in table[header_val]:
                 #encoded_vals.append()
-                encoded_vals  = torch.cat((encoded_vals, get_embedding(value)), 0)
+                emb = await get_embedding(value)
+                encoded_vals  = torch.cat((encoded_vals, emb), 0)
         data[header_val] = encoded_vals.cpu()
     return data, table
 
 ## external memory lookup
-def memory_lookup(embeddings, query_value, column_values, lookup_map, column_map, cond_col, threshold=1.0):
+async def memory_lookup(embeddings, query_value, column_values, lookup_map, column_map, cond_col, threshold=1.0):
     lookup_value = None
     query_value = query_value.replace('`','').strip()
-    sorted_sim, index = compute_cosine(query_value, embeddings)
+    sorted_sim, index = await compute_cosine(query_value, embeddings)
     if sorted_sim >= .70:
         lookup_value = column_values[index]
     else:
@@ -150,22 +151,23 @@ def memory_lookup(embeddings, query_value, column_values, lookup_map, column_map
     return (cond_col, lookup_value)
 
 ## compute cosine similarity between matrix of candidattes and a query vector      
-def compute_cosine(query_value, embeddings):
-    query_embedding = get_embedding(query_value).to(torch_device)
+async def compute_cosine(query_value, embeddings):
+    query_embedding = await get_embedding(query_value)
+    query_embedding = query_embedding.to(torch_device)
     embeddings = embeddings.to(torch_device)
-    
-    sim = cos_sim(embeddings, query_embedding)
+
+    sim = await cos_sim(embeddings, query_embedding)
     sorted_sim, indices = torch.sort(sim, axis=0, descending=True)
     return sorted_sim[0][0].item(), indices[0][0].item()
 
 ## define sql augment function to resolved the ambigous entities
 sql_operators = ['>', '=', '<', '>=', '<=', '<>']
 agg_operators = ['MAX', 'AVG', 'MIN', 'COUNT', 'SUM']
-def augment_sql(sql, header, rows, header_types, question, lookup_value=False):
+async def augment_sql(sql, header, rows, header_types, question, lookup_value=False):
     header = header
     rows = rows
     header_types = header_types
-    encoded_data, table = encode_data(rows, header, header_types)
+    encoded_data, table = await encode_data(rows, header, header_types)
     
     try:
         select_clause = sql.split('FROM')[0].strip().split('SELECT')[1]
@@ -191,7 +193,7 @@ def augment_sql(sql, header, rows, header_types, question, lookup_value=False):
                     cond_col_type = header_types[header.index(cond_col)]
                     if operator == '=' and cond_col_type == 'text':
                         if not lookup_value:
-                            cond_col, lookup_value = memory_lookup(
+                            cond_col, lookup_value = await memory_lookup(
                                 embeddings=encoded_data[cond_col], 
                                 query_value=con_val, 
                                 column_values=table[cond_col].values ,
@@ -217,7 +219,7 @@ def augment_sql(sql, header, rows, header_types, question, lookup_value=False):
                         
             
     except Exception as e:
-        #print('error parsing sql', e)
+        print('error parsing sql', e)
         return None, None
     where_final = " AND ".join(where_conditions)
     agg_final = ""
@@ -228,7 +230,7 @@ def augment_sql(sql, header, rows, header_types, question, lookup_value=False):
     sql_final = f"{select_final} FROM table "
     if len(where_conditions):
         sql_final += f"WHERE {where_final} "
-    return (sql_final, table_name, agg_clause, select_cols, where_conditions)
+    return (sql_final)
  
 
 

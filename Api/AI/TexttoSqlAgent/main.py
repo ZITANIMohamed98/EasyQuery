@@ -22,8 +22,8 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     headers="actors: [id, name, movie, title, genre, rating] nba: [player, team, points, championship, year] finance:[ id, amount, date ]"
     
     print("getting relevent table")
-    
-    relevent_table = get_relevent_table( question, tables, headers )
+
+    # relevent_table = get_relevent_table( question, tables, headers )
 
     ## define the device to use, cuda if available else cpu
         ## this is used to run the model on GPU if available
@@ -34,7 +34,10 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     encoding_tokenizer = AutoTokenizer.from_pretrained(encoding_model_name)
 
     ## define data, we will define rows and header and column types of each column separately here
-    rows = [['Aleksandar Radojević', '25', 'Serbia', 'Center', '1999-2000', 'Barton CC (KS)'], ['Shawn Respert', '31', 'United States', 'Guard', '1997-98', 'Michigan State'], ['Quentin Richardson', 'N/A', 'United States', 'Forward', '2013-present', 'DePaul'], ['Alvin Robertson', '7, 21', 'United States', 'Guard', '1995-96', 'Arkansas'], ['Carlos Rogers', '33, 34', 'United States', 'Forward-Center', '1995-98', 'Tennessee State'], ['Roy Rogers', '9', 'United States', 'Forward', '1998', 'Alabama'], ['Jalen Rose', '5', 'United States', 'Guard-Forward', '2003-06', 'Michigan'], ['Terrence Ross', '31', 'United States', 'Guard', '2012-present', 'Washington']]
+    rows = [['Lebron James', '24', 'United States', 'Center', '1999-2000', 'Barton CC (KS)'], 
+            ['Shawn Respert', '31', 'United States', 'Guard', '1997-98', 'Michigan State'], 
+            ['Quentin Richardson', 'N/A', 'United States', 'Forward', '2013-present', 'DePaul'], 
+            ['Alvin Robertson', '7, 21', 'United States', 'Guard', '1995-96', 'Arkansas'], ['Carlos Rogers', '33, 34', 'United States', 'Forward-Center', '1995-98', 'Tennessee State'], ['Roy Rogers', '9', 'United States', 'Forward', '1998', 'Alabama'], ['Jalen Rose', '5', 'United States', 'Guard-Forward', '2003-06', 'Michigan'], ['Terrence Ross', '31', 'United States', 'Guard', '2012-present', 'Washington']]
     header = ['Player', 'No.', 'Nationality', 'Position', 'Years in Toronto', 'School/Club Team']
     header_column_types = ['text', 'text', 'text', 'text', 'text', 'text']
     
@@ -50,20 +53,22 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     question_schema = question+" </s> "+ " ".join(schema_parts)
 
     print("Question Schema:", question_schema)
-    prediction = erosion_step(question_schema,torch_device)
-    final_sql, _, _, _, _ = augment_sql(prediction, header, rows, header_column_types, question=question_schema, lookup_value=False)
+    prediction = await erosion_step(question_schema,torch_device)
+    final_sql = await augment_sql(prediction, header, rows, header_column_types, question=question_schema, lookup_value=False)
     
     print("Final SQL Query:", final_sql)
-
+    if not final_sql:
+        print("No SQL query generated.")
+        return None 
     sql_query = sqlvalidator.parse(final_sql)
-
-    if not sql_query.is_valid():
-         print("Invalid SQL query generated.")
-    else:
-        # If the SQL query is valid, proceed to responseQueryModel
-        output = responseQueryModel(final_sql,question,user_id,activity_id,database_name)
-        predict_query(output)
-        print("SQL query generated successfully:", final_sql)
+    
+    # if not sql_query.is_valid():
+    #      print("Invalid SQL query generated.")
+    # else:
+    # If the SQL query is valid, proceed to responseQueryModel
+    output = responseQueryModel(final_sql,question,user_id,activity_id,database_name)
+    await predict_query(output)
+    print("SQL query generated successfully:", final_sql)
     return output
 
 
@@ -82,10 +87,11 @@ async def predict_query(response_model: responseQueryModel):
         "input": response_model.input,
         "querypredicted": response_model.querypredicted
     }
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            "http://localhost:8000/predictQuery",
-            json=data
-        )
-        response.raise_for_status()
-        return response.json()
+    return data
+    # async with httpx.AsyncClient() as client:
+    #     response = await client.post(
+    #         "http://localhost:8000/predictQuery",
+    #         json=data
+    #     )
+    #     response.raise_for_status()
+    #     return response.json()

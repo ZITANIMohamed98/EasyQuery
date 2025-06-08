@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from AI.TexttoSqlAgent.models import getQueryModel, listAllowedDbModel
 from AI.AnalyzersCrew.models import executeQueryModel
-
+import asyncio
 from AI.TexttoSqlAgent.main import text_to_sql
 from SQLTools.main import get_allowed_dbs, initiate_database_transaction, execute_query
 load_dotenv()
@@ -31,7 +31,8 @@ async def get_query(request: Request):
     )
     # deserialize the data into the getQueryModel
     # Call the text_to_sql function to generate the SQL query
-    sql_query = text_to_sql(getQuerydata)
+    sql_query = await text_to_sql(getQuerydata)
+    await asyncio.sleep(10)  # Simulate some processing delay
     return data["activity_id"]
 
 
