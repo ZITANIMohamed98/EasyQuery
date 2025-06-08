@@ -1,4 +1,4 @@
-<div #chatWindow class="chat-window-container">
+<div #chatWindow class="chat-window-container" (scroll)="onScroll()">
   <div
     *ngFor="let msg of chatService.messages; let i = index"
     class="messages-container"
@@ -7,6 +7,7 @@
       'justify-content-start': msg.sender !== 'You'
     }"
   >
+    <div class="message-sender" *ngIf="msg.sender !== 'You'">{{ msg.sender }}</div>
     <div
       [ngClass]="{
         'user-message': msg.sender === 'You',

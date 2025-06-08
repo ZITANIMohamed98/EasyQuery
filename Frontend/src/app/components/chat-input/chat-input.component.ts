@@ -54,7 +54,7 @@ export class ChatInputComponent {
       .subscribe(response => {
         // Add the generated SQL as a new message with copy and execute enabled
         this.chatService.addMessage({
-          sender: 'system',
+          sender: 'EasyQuery',
           text: response.query,
           sql: response.query,
           type: 'sql',
