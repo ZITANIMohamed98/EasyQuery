@@ -38,10 +38,18 @@ input {
 }
 
 
-button:disabled {
-  background: #a0bde2;
-  cursor: not-allowed;
+button[type="submit"] {
+  display: block;
+  width: 100%;
+  font-size: 1.15rem;
+  font-weight: 500;
+  border-radius: 8px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
 }
+
 
 .subtitle {
   text-align: center;
