@@ -34,14 +34,17 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     encoding_tokenizer = AutoTokenizer.from_pretrained(encoding_model_name)
 
     ## define data, we will define rows and header and column types of each column separately here
-    rows = [['Lebron James', '24', 'United States', 'Center', '1999-2000', 'Barton CC (KS)'], 
-            ['Shawn Respert', '31', 'United States', 'Guard', '1997-98', 'Michigan State'], 
-            ['Quentin Richardson', 'N/A', 'United States', 'Forward', '2013-present', 'DePaul'], 
-            ['Alvin Robertson', '7, 21', 'United States', 'Guard', '1995-96', 'Arkansas'], ['Carlos Rogers', '33, 34', 'United States', 'Forward-Center', '1995-98', 'Tennessee State'], ['Roy Rogers', '9', 'United States', 'Forward', '1998', 'Alabama'], ['Jalen Rose', '5', 'United States', 'Guard-Forward', '2003-06', 'Michigan'], ['Terrence Ross', '31', 'United States', 'Guard', '2012-present', 'Washington']]
-    header = ['Player', 'No.', 'Nationality', 'Position', 'YearsInToronto', 'School/ClubTeam']
-    header_column_types = ['text', 'text', 'text', 'text', 'text', 'text']
-    
-    
+    rows = [
+        [2023, "SE", "FT", "Principal Data Scientist", 80000, "EUR", 85847, "ES", 100, "ES", "L"],
+        [2023, "MI", "CT", "ML Engineer", 30000, "USD", 30000, "US", 100, "US", "S"],
+        [2023, "MI", "CT", "ML Engineer", 25500, "USD", 25500, "US", 100, "US", "S"],
+        [2023, "SE", "FT", "Data Scientist", 175000, "USD", 175000, "CA", 100, "CA", "M"],
+        [2023, "SE", "FT", "Data Scientist", 120000, "USD", 120000, "CA", 100, "CA", "M"],
+        [2023, "SE", "FT", "Applied Scientist", 222200, "USD", 222200, "US", 0, "US", "L"],
+        [2023, "SE", "FT", "Applied Scientist", 136000, "USD", 136000, "US", 0, "US", "L"]
+    ]
+    header = ['work_year','experience_level','employment_type','job_title','salary','salary_currency','salary_in_usd','employee_residence','remote_ratio','company_location','company_size']
+    header_column_types = ['int', 'text', 'text', 'text', 'int', 'text', 'int', 'text', 'int', 'text','text']
 
     # Generate the schema string with incrementing <colX> tags
     schema_parts = [
