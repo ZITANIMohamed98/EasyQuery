@@ -36,7 +36,7 @@ async def get_query(request: Request):
     # Call the text_to_sql function to generate the SQL query
     sql_query = await text_to_sql(getQuerydata)
     # await asyncio.sleep(10)  # Simulate some processing delay
-    return sql_query.querypredicted
+    return sql_query
 
 
 @router.get("/listAllowedDbs")
