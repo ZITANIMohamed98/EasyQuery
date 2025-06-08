@@ -9,7 +9,7 @@ import sqlvalidator
 import httpx
 import asyncio
 
-async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
+async def text_to_sql(predictQueryModel: getQueryModel) -> str:
     
     question= predictQueryModel.input
     user_id = predictQueryModel.user_id
@@ -72,7 +72,7 @@ async def text_to_sql(predictQueryModel: getQueryModel) -> responseQueryModel:
     output = responseQueryModel(final_sql,question,user_id,activity_id,database_name)
     await predict_query(output)
     print("SQL query generated successfully:", final_sql)
-    return output
+    return final_sql
 
 
 # input = getQueryModel('What is the name of the player who scored the most points in the NBA?')
