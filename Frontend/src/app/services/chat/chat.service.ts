@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { GetQueryModel } from '../../data-models/get-query-model';
+import { of } from 'rxjs';
 
 export interface ChatMessage {
   sender: string;
@@ -25,7 +26,10 @@ export class ChatService {
    */
 
 getQuery(inputData: GetQueryModel) {
-  return this.http.post<any>(`${this.baseApi}/getQuery`, inputData);
+  // return this.http.post<any>(`${this.baseApi}/getQuery`, inputData);
+return of({
+      query: `SELECT * FROM ${inputData.database_name} WHERE city='Seattle' AND status='completed';`
+    });
 }
 
   /**

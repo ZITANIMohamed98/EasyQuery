@@ -3,7 +3,6 @@ import os
 import sys  
 from sqlalchemy import create_engine, text
 import json
-from 
 
 # based on user Id, read the database_access.json file to check which department the user belongs to and get the databases list
 def get_allowed_dbs(user_id: str) -> list[str]:

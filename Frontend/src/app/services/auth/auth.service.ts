@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs'; 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -42,6 +43,10 @@ export class AuthService {
   }
 
   getAllowedDatabases(userId: string) {
+
+        return of(['trips', 'users', 'orders']);
+
+
     // Call the backend endpoint with user_id as a query parameter
     return this.http.get<string[]>(`${this.baseApi}/listAllowedDbs?user_id=${userId}`);
   }

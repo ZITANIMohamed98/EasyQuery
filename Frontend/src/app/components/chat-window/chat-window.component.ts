@@ -20,6 +20,8 @@ export class ChatWindowComponent implements AfterViewChecked {
 
   ngAfterViewChecked() {
     Prism.highlightAllUnder(this.chatWindow.nativeElement);
+    // this.scrollToBottom();
+  setTimeout(() => this.scrollToBottom(), 0);
   }
 
 copyMessage(event: MouseEvent, text: string, index: number): void {
@@ -67,4 +69,12 @@ executeQuery(sql: string, index: number) {
     const upperText = text.toUpperCase();
     return ChatWindowComponent.SQL_KEYWORDS.some(keyword => upperText.includes(keyword));
   }
+
+  private scrollToBottom(): void {
+  try {
+    this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
+  } catch (err) {
+    // Handle errors if needed
+  }
+}
 }

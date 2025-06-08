@@ -1,7 +1,7 @@
 <div #chatWindow class="chat-window-container">
   <div
     *ngFor="let msg of chatService.messages; let i = index"
-    class="d-flex"
+    class="messages-container"
     [ngClass]="{
       'justify-content-end': msg.sender === 'You',
       'justify-content-start': msg.sender !== 'You'

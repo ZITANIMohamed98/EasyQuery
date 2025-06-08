@@ -1,18 +1,10 @@
 <div class="app-container">
   <app-sidebar></app-sidebar>
 
-  <div class="main-content">
-    <div class="top-bar">
-      <div class="left-controls">
-        <app-database-status></app-database-status>
-        <app-database-selector></app-database-selector>
-      </div>
       <button (click)="logout()" class="logout-button">Logout</button>
-    </div>
 
     <div class="chat-area">
       <app-chat-window class="chat-window"></app-chat-window>
       <app-chat-input class="chat-input"></app-chat-input>
     </div>
   </div>
-</div>

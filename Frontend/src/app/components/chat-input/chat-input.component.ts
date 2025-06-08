@@ -3,24 +3,36 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat/chat.service';
 import { GetQueryModel } from '../../data-models/get-query-model';
+import { DatabaseSelectorComponent } from '../database-selector/database-selector.component';
 
 @Component({
   selector: 'app-chat-input',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DatabaseSelectorComponent],
   templateUrl: './chat-input.component.html',
   styleUrls: ['./chat-input.component.css']
 })
 export class ChatInputComponent {
   inputText = '';
   inputFocused = false;
-  messageSent = false; // <- Add this
+  messageSent = false; 
   lastQuery: string = '';
+  warningMessage: string = 'Please choose a database before sending a question.';
+  selectedDatabase: string | null = null;
 
+  onDatabaseSelected(db: string) {
+    this.selectedDatabase = db;
+    this.warningMessage = ''; // Clear warning when a database is selected
+  }
 
   constructor(private chatService: ChatService) { }
 
-sendMessage() {
+  sendMessage() {
+    if (!this.selectedDatabase) {
+      this.warningMessage = 'Please choose a database before sending a question.';
+      return;
+    }
+    this.warningMessage = '';
   if (this.inputText.trim()) {
     const message = this.inputText;
     this.inputText = '';

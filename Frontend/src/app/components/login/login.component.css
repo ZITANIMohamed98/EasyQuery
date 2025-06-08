@@ -1,75 +1,123 @@
-/* Center the login box */
 .login-container {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f0f2f5;
 }
 
-
-/* Box styles */
 .login-box {
-  background: white;
   padding: 2rem 3rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+    justify-content: center;
+
+  align-items: center;
+  border: none;
 }
 
-/* Heading */
 .login-box h2{
   text-align: center;
   margin-bottom: 1.5rem;
   font-size: 1.75rem;
 }
 
-.login-box .project-logo{
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-/* Form group */
 .form-group {
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Input fields */
 input {
   padding: 0.6rem;
-  border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
   outline: none;
   transition: border 0.2s ease;
 }
 
-input:focus {
-  border-color: #4a90e2;
-}
-
-/* Submit button */
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-button:hover:not(:disabled) {
-  background: #357ab7;
-}
 
 button:disabled {
   background: #a0bde2;
   cursor: not-allowed;
+}
+
+.subtitle {
+  text-align: center;
+  color: #888;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+input.grey-placeholder::placeholder {
+  color: #888;
+  opacity: 1;
+}
+
+.form-group {
+  width: 100%;
+}
+
+input {
+  width: 100%;
+  border: none;
+}
+
+.password-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-group input {
+  flex: 1;
+  width: 100%;
+  padding-right: 2.5rem; /* Space for the eye button */
+}
+
+.eye-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: #bbb;
+  font-size: 1.2rem;
+  padding: 0;
+  z-index: 2;
+}
+
+.eye-btn:hover {
+  color: #fff;
+}
+
+/* Add to the end of your login.component.css */
+
+/* Position the left icon inside the input */
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 1.1rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Add left padding to inputs to make space for the icon */
+.form-group input,
+.password-group input {
+  padding-left: 2.2rem;
+}
+
+/* Ensure .form-group and .password-group are positioned for absolute icons */
+.form-group,
+.password-group {
+  position: relative;
 }
