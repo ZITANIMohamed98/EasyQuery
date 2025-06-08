@@ -15,26 +15,15 @@ from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_core.callbacks.base import BaseCallbackHandler
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama.llms import OllamaLLM
+import langchain_community.tools as tools
+from langchain_core.tools import tool
+from .models import returnReportModel, executeQueryModel
+import httpx
 
-def test():
-    print("Crew is working!")
+def define_crew(llm: OllamaLLM, data: pd.DataFrame) -> Crew:
 
-df = pd.read_csv("ds_salaries.csv")
-df.head()
-connection = sqlite3.connect("salaries.db")
-df.to_sql(name="salaries", con=connection)
-
-llm = OllamaLLM(model="llama3",temperature=0)
-
-db = SQLDatabase.from_uri("sqlite:///salaries.db")
-df = pd.read_sql_query("SELECT * FROM salaries LIMIT 10", connection)
-
-#data_queried = df.to_csv(index=False)
-
-data_queried = df.to_json(orient="records", lines=True)
-print(data_queried)
-print("checking with the data analyst")
-data_analyst = Agent(
+    # Initialize the Crew of one data analyzer and one report generator
+    data_analyst = Agent(
     role="Senior Data Analyst",
     goal="You receive data from the database developer and analyze it",
     backstory=dedent(
@@ -47,9 +36,8 @@ data_analyst = Agent(
     ),
     llm=llm,
     allow_delegation=False,
-)
-print("generating the report writer")
-report_writer = Agent(
+    )
+    report_writer = Agent(
     role="Senior Report Editor",
     goal="Write an executive summary type of report based on the work of the analyst",
     backstory=dedent(
@@ -61,54 +49,78 @@ report_writer = Agent(
     ),
     llm=llm,
     allow_delegation=False,
-)
-
-analyze_data = Task(
-    description="Analyze the data from the database and write an analysis for {query}.",
+    )
+    
+    analyze_data = Task(
+    description="Analyze the data from the database and write an analysis for {query}, and these are the results: {data}",
     expected_output="Detailed analysis text",
-    agent=data_analyst,
-    context =[data_queried],
-)
+    agent=data_analyst
+    )
 
-write_report = Task(
-    description=dedent(
+    write_report = Task(
+        description=dedent(
+            """
+            Write an executive summary of the report from the analysis. The report
+            must be less than 100 words.
         """
-        Write an executive summary of the report from the analysis. The report
-        must be less than 100 words.
-    """
-    ),
-    expected_output="Markdown report",
-    agent=report_writer,
-    context=[analyze_data],
-)
+        ),
+        expected_output="Markdown report",
+        agent=report_writer,
+        context=[analyze_data],
+    )
 
-crew = Crew(
+    crew = Crew(
     agents=[data_analyst, report_writer],
     tasks=[analyze_data, write_report],
     process=Process.sequential,
-    verbose=False,
+    verbose=2,
     memory=False,
     output_log_file="crew.log",
 )
+# execute_crew_model: executeQueryModel
+def generate_report() -> returnReportModel:
+    """
+    Generate a report based on the analysis performed by the crew.
+    """
 
-inputs = {
-    "query": "Effects on salary (in USD) based on company location, size and employee experience"
-}
-print ("kicking off the crew")
-result = crew.kickoff(inputs=inputs)
-
-print(result)
-
-inputs = {
-    "query": "How is the `Machine Learning Engineer` salary in USD is affected by remote positions"
-}
-
-result = crew.kickoff(inputs=inputs)
-
-print(result)
-
-# ## References
-# 
-# - [DS Salaries Dataset](https://huggingface.co/datasets/Einstellung/demo-salaries)
+    # Initialize the LLM
+    llm = OllamaLLM(
+            model="llama3",
+            temperature=0.7,
+            max_tokens=1000
+    )
+    df = pd.read_csv("Api/AI/AnalyzersCrew/ds_salaries.csv")
+    connection = sqlite3.connect("salaries.db")
+    df.to_sql(name="salaries", con=connection)
+    df = pd.read_sql_query("SELECT * FROM salaries LIMIT 10", connection)
 
 
+    crew = define_crew(llm, df)
+    inputs = {
+        "data": df,
+        "query": "Effects on salary (in USD) based on company location, size and employee experience"
+    }
+
+    result = crew.kickoff(inputs=inputs)
+
+    return result
+
+async def returnReport(report_model: returnReportModel):
+    """
+    Makes an HTTP POST request to the /returnReport endpoint using a returnReportModel instance.
+    """
+    data = {
+        "user_id": report_model.user_id,
+        "activity_id": report_model.activity_id,
+        "database_name": report_model.database_name,
+        "input": report_model.input,
+        "output": report_model.output
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "http://localhost:8000/returnReport",
+            json=data
+        )
+        response.raise_for_status()
+        return response.json()
+print(generate_report())

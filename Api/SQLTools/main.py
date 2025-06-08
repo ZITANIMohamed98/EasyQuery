@@ -3,6 +3,14 @@ import os
 import sys  
 from sqlalchemy import create_engine, text
 import json
+from langchain_community.utilities.sql_database import SQLDatabase
+from langchain_core.tools import tool
+import pandas as pd
+import sqlite3
+import langchain_community.tools as tools
+from langchain_core.tools import tool
+from langchain_ollama.llms import OllamaLLM
+
 
 # based on user Id, read the database_access.json file to check which department the user belongs to and get the databases list
 def get_allowed_dbs(user_id: str) -> list[str]:
@@ -25,22 +33,37 @@ def get_allowed_dbs(user_id: str) -> list[str]:
         print("Error: database_access.json file not found.")
         return []
 
-def initiate_database_transaction():
-    # Create a database connection
-    print("Initiating database transaction...")
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    if not DATABASE_URL:
-        print("Error: DATABASE_URL environment variable is not set.")
-        return []
-    engine = create_engine(DATABASE_URL)
+# def initiate_database_transaction(databasename: str):
+#     """
+#     Initiates a database transaction by connecting to the database.
+#     """
+
+#     df = pd.read_csv("ds_salaries.csv")
+#     df.head()
+#     connection = sqlite3.connect("salaries.db")
+#     df.to_sql(name="salaries", con=connection)
+#     db = SQLDatabase.from_uri("sqlite:///salaries.db")
+#     df = pd.read_sql_query("SELECT * FROM salaries LIMIT 10", db.connection)
+    
+
+
+
+# # def initiate_database_transaction():
+# #     # Create a database connection
+# #     print("Initiating database transaction...")
+# #     DATABASE_URL = os.getenv("DATABASE_URL")
+# #     if not DATABASE_URL:
+# #         print("Error: DATABASE_URL environment variable is not set.")
+# #         return []
+# #     engine = create_engine(DATABASE_URL)
     
 
     
-    relevent_table = get_relevent_table(question, tables, headers)
+    
 
-# This script connects to a database and executes a SQL query passed as a command line argument.
-def execute_query(query, params=None):
-    with engine.connect() as connection:
-        result = connection.execute(text(query), params)
-        return result.fetchall()
+# # This script connects to a database and executes a SQL query passed as a command line argument.
+# # def execute_query(query, params=None):
+# #     with engine.connect() as connection:
+# #         result = connection.execute(text(query), params)
+# #         return result.fetchall()
     

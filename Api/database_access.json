@@ -3,7 +3,7 @@
     "departments": {
         "HR": {
             "databases": [
-                "hr_db1",
+                "salaries.db",
                 "hr_db2"
             ]
         },

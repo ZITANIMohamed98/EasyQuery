@@ -4,10 +4,12 @@ from pydantic import BaseModel, constr
 import os
 from dotenv import load_dotenv
 from AI.TexttoSqlAgent.models import getQueryModel, listAllowedDbModel
-from AI.AnalyzersCrew.models import executeQueryModel
+from AI.AnalyzersCrew.models import executeQueryModel, returnReportModel
 import asyncio
 from AI.TexttoSqlAgent.main import text_to_sql
-from SQLTools.main import get_allowed_dbs, initiate_database_transaction, execute_query
+from SQLTools.main import get_allowed_dbs
+from AI.AnalyzersCrew.main import returnReport
+
 load_dotenv()
 
 
@@ -33,7 +35,7 @@ async def get_query(request: Request):
     # Call the text_to_sql function to generate the SQL query
     sql_query = await text_to_sql(getQuerydata)
     await asyncio.sleep(10)  # Simulate some processing delay
-    return data["activity_id"]
+    return sql_query
 
 
 @router.get("/listAllowedDbs")
@@ -57,14 +59,8 @@ async def execute_query(request: Request):
         input=data.get("input")
     )
 
-    # Example: mock result for demonstration
-    result = {
-        "user_id": exec_model.user_id,
-        "activity_id": exec_model.activity_id,
-        "database_name": exec_model.database_name,
-        "input": exec_model.input,
-        "output": "Query executed successfully (mocked)"
-    }
-    return result
 
+    report_generated = await returnReport(exec_model)
+    await asyncio.sleep(10) 
+    return report_generated
 
