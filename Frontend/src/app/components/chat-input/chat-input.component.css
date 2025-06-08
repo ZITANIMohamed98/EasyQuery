@@ -5,7 +5,6 @@
   align-items: center;
   transition: all 0.5s ease;
   padding: 0 23rem;
-  background-color: #f9fafc;
 }
 
 .chat-input-container.centered {
@@ -18,6 +17,21 @@
   padding-bottom: 2rem;
 }
 
+.database-selector-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  margin-top: -0.5rem; /* Adjust as needed */
+}
+
+.chat-input-container .database-selector {
+  max-width: 300px;
+  width: auto;
+  margin-bottom: 0;
+  padding-right: 0; /* Remove if you want flush right */
+}
+
 .initial-prompt {
   font-size: 1.5rem;
   font-weight: 500;
@@ -28,7 +42,8 @@
 
 .chat-input {
   width: 100%;
-  border-top: 1px solid #e5e7eb;
+      border: none;
+  border-radius: 12px;
 }
 
 .chat-input-container.centered .chat-input {
@@ -39,16 +54,14 @@
   position: relative;
   flex: 1;
   width: 700px;
+    border: none;
+  border-radius: 12px;
 }
-
-/* ... Keep your existing input-wrapper input and button styles ... */
 
 
 .input-wrapper input {
   width: 100%;
   padding: 0.75rem 3rem 0.75rem 0.75rem; /* right padding for the button */
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
   outline: none;
   font-size: 1rem;
 }
@@ -78,35 +91,13 @@
   color: #2563eb;
 }
 
-
-.confirm-prompt-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.confirm-prompt {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.confirm-prompt pre {
-  background: #f0f0f0;
-  padding: 1rem;
-  max-height: 200px;
-  overflow-y: auto;
+.warning-message {
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  padding: 0.5rem 1rem;
   border-radius: 6px;
-  font-family: monospace;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
+

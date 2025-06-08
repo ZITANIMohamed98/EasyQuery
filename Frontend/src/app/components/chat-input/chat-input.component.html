@@ -1,29 +1,36 @@
 <div class="chat-input-container" [class.centered]="!messageSent">
   <div *ngIf="!messageSent" class="initial-prompt">
-    How can I help you?
+    What would you like to query today?
   </div>
-
+      <div *ngIf="warningMessage" class="warning-message">
+      {{ warningMessage }}
+    </div>
+  <div class="database-selector-wrapper">
+    <app-database-selector
+      class="database-selector"
+      (databaseSelected)="onDatabaseSelected($event)"
+    >
+      ></app-database-selector
+    >
+  </div>
   <div class="chat-input">
     <div class="input-wrapper">
       <input
         type="text"
         [(ngModel)]="inputText"
-        placeholder="What would you like to query?"
+        placeholder="Message EasyQuery"
         (keydown.enter)="sendMessage()"
         (focus)="inputFocused = true"
         (blur)="inputFocused = false"
+        [disabled]="!selectedDatabase"
       />
       <button
         (mousedown)="sendMessage()"
         [class.visible]="inputText.trim().length > 0 && inputFocused"
+        [disabled]="!selectedDatabase"
       >
         <i class="bi bi-arrow-up"></i>
       </button>
-    </div>
-    <!-- Display the SQL query returned from sendMessage -->
-    <div *ngIf="lastQuery" class="query-output">
-      <strong>Generated SQL:</strong>
-      <pre>{{ lastQuery }}</pre>
     </div>
   </div>
 </div>

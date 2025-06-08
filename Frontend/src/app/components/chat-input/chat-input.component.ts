@@ -3,24 +3,36 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat/chat.service';
 import { GetQueryModel } from '../../data-models/get-query-model';
+import { DatabaseSelectorComponent } from '../database-selector/database-selector.component';
 
 @Component({
   selector: 'app-chat-input',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DatabaseSelectorComponent],
   templateUrl: './chat-input.component.html',
   styleUrls: ['./chat-input.component.css']
 })
 export class ChatInputComponent {
   inputText = '';
   inputFocused = false;
-  messageSent = false; // <- Add this
+  messageSent = false; 
   lastQuery: string = '';
+  warningMessage: string = 'Please choose a database before sending a question.';
+  selectedDatabase: string | null = null;
 
+  onDatabaseSelected(db: string) {
+    this.selectedDatabase = db;
+    this.warningMessage = ''; // Clear warning when a database is selected
+  }
 
   constructor(private chatService: ChatService) { }
 
 sendMessage() {
+  if (!this.selectedDatabase) {
+    this.warningMessage = 'Please choose a database before sending a question.';
+    return;
+  }
+  this.warningMessage = '';
   if (this.inputText.trim()) {
     const message = this.inputText;
     this.inputText = '';
@@ -35,20 +47,19 @@ sendMessage() {
     });
 
     // Call getQuery from the service with random user_id and activity_id
-    const userId = 'user_' + Math.random().toString(36).substring(2, 10);
+    const userId = 'db_user1';
     const activityId = 'activity_' + Math.random().toString(36).substring(2, 10);
 
-    this.chatService.getQuery(new GetQueryModel(userId, activityId, 'trips', message))
-      .subscribe(response => {
-        // Add the generated SQL as a new message with copy and execute enabled
+   this.chatService.getQuery(new GetQueryModel(userId, activityId, this.selectedDatabase, message))
+      .subscribe((query: string) => {
         this.chatService.addMessage({
-          sender: 'system',
-          text: response.query,
-          sql: response.query,
+          sender: 'EasyQuery',
+          text: query,
+          sql: query,
           type: 'sql',
           awaitingExecution: true
         });
-        this.lastQuery = response.query;
+        this.lastQuery = query;
       });
   }
 }

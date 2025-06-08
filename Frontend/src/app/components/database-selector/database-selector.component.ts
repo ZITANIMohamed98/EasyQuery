@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth/auth.service';
 export class DatabaseSelectorComponent implements OnInit {
   databases: string[] = [];
   selectedDb: string | null = null;
-  @Output() dbSelected = new EventEmitter<string>();
+@Output() databaseSelected = new EventEmitter<string>();
 
   constructor(private authService: AuthService) {}
 
@@ -25,8 +25,9 @@ export class DatabaseSelectorComponent implements OnInit {
     }
   }
 
-  onDbChange(db: string) {
-    this.selectedDb = db;
-    this.dbSelected.emit(db);
-  }
+
+onDbChange(db: string) {
+  this.selectedDb = db;
+  this.databaseSelected.emit(db);
+}
 }

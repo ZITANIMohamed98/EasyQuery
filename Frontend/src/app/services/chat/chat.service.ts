@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { GetQueryModel } from '../../data-models/get-query-model';
+import { of } from 'rxjs';
 
 export interface ChatMessage {
   sender: string;
@@ -14,6 +15,8 @@ export interface ChatMessage {
 export class ChatService {
   messages: ChatMessage[] = [];
   private baseApi = 'http://localhost:8000';
+    private serverIp = 'http://20.121.40.117:80'
+
 
   queryReady = new EventEmitter<string>(); // SQL is emitted when ready for execution
 
@@ -25,7 +28,10 @@ export class ChatService {
    */
 
 getQuery(inputData: GetQueryModel) {
-  return this.http.post<any>(`${this.baseApi}/getQuery`, inputData);
+  return this.http.post<string>(`${this.serverIp}/getQuery`, inputData);
+// return of({
+//       query: `SELECT * FROM ${inputData.database_name} WHERE city='Seattle' AND status='completed';`
+//     });
 }
 
   /**
@@ -39,7 +45,7 @@ getQuery(inputData: GetQueryModel) {
   input: string;
   query: string;
 }) {
-  return this.http.post<any>(`${this.baseApi}/executeQuery`, data);
+  return this.http.post<string>(`${this.serverIp}/executeQuery`, data);
 }
 
   /**

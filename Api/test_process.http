@@ -6,6 +6,14 @@ Content-Type: application/json
 {"user_id": "user42","activity_id": "hack2024","database_name": "trips","input": "Show all completed trips in Seattle"
 }
 
+### Test /getQuery (POST) with HTTP
+POST http://20.121.40.117:80/getQuery
+Content-Type: application/json
+
+{"user_id": "user42","activity_id": "hack2024","database_name": "trips","input": "Show all completed trips in Seattle"
+}
+
+
 ### Test /listAllowedDbs (GET)
 GET http://localhost:8000/listAllowedDbs?user_id=db_user1
 

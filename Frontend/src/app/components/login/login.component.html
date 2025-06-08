@@ -1,29 +1,36 @@
 <div class="login-container">
   <div class="login-box">
-    <div class="project-logo">EasyQuery</div>
     <h2>Login</h2>
+    <div class="subtitle">Access to your account</div>
     <form (ngSubmit)="onLogin()" #loginForm="ngForm">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          [(ngModel)]="email"
-          required
-        />
-      </div>
+     <div class="form-group">
+  <span class="input-icon"><i class="bi bi-at"></i></span>
+  <input
+    type="email"
+    id="email"
+    name="email"
+    [(ngModel)]="email"
+    required
+    placeholder="Username"
+    class="grey-placeholder"
+  />
+</div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          [(ngModel)]="password"
-          required
-        />
-      </div>
+<div class="form-group password-group">
+  <span class="input-icon"><i class="bi bi-lock"></i></span>
+  <input
+    [type]="showPassword ? 'text' : 'password'"
+    id="password"
+    name="password"
+    [(ngModel)]="password"
+    required
+    placeholder="Password"
+    class="grey-placeholder"
+  />
+  <button type="button" class="eye-btn" (click)="togglePassword()" tabindex="-1">
+    <i class="bi" [ngClass]="showPassword ? 'bi-eye' : 'bi-eye-slash'"></i>
+  </button>
+</div>
 
       <button type="submit" [disabled]="!loginForm.valid">Login</button>
     </form>
