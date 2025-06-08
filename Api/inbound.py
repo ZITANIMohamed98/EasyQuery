@@ -23,6 +23,7 @@ router = APIRouter()
 @router.post("/getQuery")
 async def get_query(request: Request):
     data = await request.json()
+    print (f"Received data: {data}")
     # Deserialize the request body into the getQueryModel
     # Deserialize the data into the getQueryModel
     getQuerydata = getQueryModel(
@@ -34,8 +35,8 @@ async def get_query(request: Request):
     # deserialize the data into the getQueryModel
     # Call the text_to_sql function to generate the SQL query
     sql_query = await text_to_sql(getQuerydata)
-    await asyncio.sleep(10)  # Simulate some processing delay
-    return sql_query
+    # await asyncio.sleep(10)  # Simulate some processing delay
+    return sql_query.querypredicted
 
 
 @router.get("/listAllowedDbs")
