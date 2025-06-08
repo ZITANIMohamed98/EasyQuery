@@ -27,12 +27,12 @@ export class ChatInputComponent {
 
   constructor(private chatService: ChatService) { }
 
-  sendMessage() {
-    if (!this.selectedDatabase) {
-      this.warningMessage = 'Please choose a database before sending a question.';
-      return;
-    }
-    this.warningMessage = '';
+sendMessage() {
+  if (!this.selectedDatabase) {
+    this.warningMessage = 'Please choose a database before sending a question.';
+    return;
+  }
+  this.warningMessage = '';
   if (this.inputText.trim()) {
     const message = this.inputText;
     this.inputText = '';
@@ -47,20 +47,19 @@ export class ChatInputComponent {
     });
 
     // Call getQuery from the service with random user_id and activity_id
-    const userId = 'user_' + Math.random().toString(36).substring(2, 10);
+    const userId = 'db_user1';
     const activityId = 'activity_' + Math.random().toString(36).substring(2, 10);
 
-    this.chatService.getQuery(new GetQueryModel(userId, activityId, 'trips', message))
-      .subscribe(response => {
-        // Add the generated SQL as a new message with copy and execute enabled
+   this.chatService.getQuery(new GetQueryModel(userId, activityId, this.selectedDatabase, message))
+      .subscribe((query: string) => {
         this.chatService.addMessage({
           sender: 'EasyQuery',
-          text: response.query,
-          sql: response.query,
+          text: query,
+          sql: query,
           type: 'sql',
           awaitingExecution: true
         });
-        this.lastQuery = response.query;
+        this.lastQuery = query;
       });
   }
 }

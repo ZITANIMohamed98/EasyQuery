@@ -59,5 +59,6 @@
   overflow-x: auto;
   font-size: 0.9rem;
   white-space: pre-wrap; 
-  max-width: 60vw;
-}
+ max-width: 700px;
+  word-break: break-word;
+  white-space: pre-line;}

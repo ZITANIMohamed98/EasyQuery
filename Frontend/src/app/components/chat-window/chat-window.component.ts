@@ -61,29 +61,28 @@ export class ChatWindowComponent implements AfterViewChecked {
   }
 
   executeQuery(sql: string, index: number) {
-    // Remove the execute button by clearing awaitingExecution flag
-    this.chatService.messages[index].awaitingExecution = false;
+  // Remove the execute button by clearing awaitingExecution flag
+  this.chatService.messages[index].awaitingExecution = false;
 
-    // Prepare the data for executeQuery
-    const message = this.chatService.messages[index];
-    this.chatService
-      .executeQuery({
-        user_id: message.sender || 'user1',
-        activity_id: 'act1',
-        database_name: 'mydb',
-        input: message.text,
-        query: sql,
-      })
-      .subscribe((response) => {
-        console.log('ExecuteQuery response:', response);
-        // Optionally, you can push the result to the chat messages here
-        this.chatService.addMessage({
-          sender: 'system',
-          text: JSON.stringify(response.data),
-          type: 'result',
-        });
+  // Prepare the data for executeQuery
+  const message = this.chatService.messages[index];
+  this.chatService
+    .executeQuery({
+      user_id: message.sender || 'user1',
+      activity_id: 'act1',
+      database_name: 'mydb',
+      input: message.text,
+      query: sql,
+    })
+    .subscribe((response: string) => {
+      // Add the result as a new message in the chat
+      this.chatService.addMessage({
+        sender: 'EasyQuery',
+        text: response,
+        type: 'result',
       });
-  }
+    });
+}
 
   private static readonly SQL_KEYWORDS = [
     'SELECT',

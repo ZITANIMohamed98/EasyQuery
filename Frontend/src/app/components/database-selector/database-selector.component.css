@@ -1,8 +1,9 @@
 .db-selector {
-  margin: 1rem 0;
+  margin: 1rem 0rem;
 }
 
 select {
+  margin: 1rem;
   padding: 0.5rem;
   font-size: 1rem;
   border-radius: 6px;

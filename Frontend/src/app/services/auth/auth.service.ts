@@ -9,6 +9,7 @@ export class AuthService {
   private loggedIn = false;
   private userId: string = 'db_user1';  
   private baseApi = 'http://localhost:8000';
+  private serverIp = 'http://20.121.40.117:80'
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -44,10 +45,10 @@ export class AuthService {
 
   getAllowedDatabases(userId: string) {
 
-        return of(['trips', 'users', 'orders']);
+        // return of(['trips', 'users', 'orders']);
 
 
     // Call the backend endpoint with user_id as a query parameter
-    return this.http.get<string[]>(`${this.baseApi}/listAllowedDbs?user_id=${userId}`);
+    return this.http.get<string[]>(`${this.serverIp}/listAllowedDbs?user_id=${userId}`);
   }
 }

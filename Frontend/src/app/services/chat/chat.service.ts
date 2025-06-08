@@ -15,6 +15,8 @@ export interface ChatMessage {
 export class ChatService {
   messages: ChatMessage[] = [];
   private baseApi = 'http://localhost:8000';
+    private serverIp = 'http://20.121.40.117:80'
+
 
   queryReady = new EventEmitter<string>(); // SQL is emitted when ready for execution
 
@@ -26,10 +28,10 @@ export class ChatService {
    */
 
 getQuery(inputData: GetQueryModel) {
-  // return this.http.post<any>(`${this.baseApi}/getQuery`, inputData);
-return of({
-      query: `SELECT * FROM ${inputData.database_name} WHERE city='Seattle' AND status='completed';`
-    });
+  return this.http.post<string>(`${this.serverIp}/getQuery`, inputData);
+// return of({
+//       query: `SELECT * FROM ${inputData.database_name} WHERE city='Seattle' AND status='completed';`
+//     });
 }
 
   /**
@@ -43,7 +45,7 @@ return of({
   input: string;
   query: string;
 }) {
-  return this.http.post<any>(`${this.baseApi}/executeQuery`, data);
+  return this.http.post<string>(`${this.serverIp}/executeQuery`, data);
 }
 
   /**
